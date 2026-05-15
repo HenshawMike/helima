@@ -12,7 +12,7 @@ export default function CartPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="flex items-center gap-4 mb-12">
-            <div className="w-12 h-2 bg-[var(--red)]"></div>
+            <div className="w-12 h-2 bg-[var(--gold)]"></div>
             <h1 className="text-5xl md:text-7xl font-black text-[var(--navy)] tracking-tighter uppercase">
               Your Cart
             </h1>
@@ -49,7 +49,7 @@ export default function CartPage() {
                           </div>
                           <button 
                             onClick={() => removeItem(item.id)}
-                            className="text-[var(--navy)] hover:text-[var(--red)] font-bold uppercase tracking-widest text-xs underline"
+                            className="text-[var(--navy)] hover:text-[var(--gold)] font-bold uppercase tracking-widest text-xs underline"
                           >
                             Remove
                           </button>
@@ -88,7 +88,7 @@ export default function CartPage() {
               <ScrollReveal delay={300} direction="right">
                 <div className="bg-[var(--navy)] text-[var(--white)] p-8 border-4 border-[var(--navy)] relative">
                   <div className="absolute top-0 right-0 w-16 h-16 bg-[var(--white)] flex items-center justify-center">
-                    <div className="w-4 h-4 bg-[var(--red)]"></div>
+                    <div className="w-4 h-4 bg-[var(--gold)]"></div>
                   </div>
                   
                   <h3 className="text-2xl font-black uppercase mb-8 border-b-2 border-[var(--white)] pb-4 tracking-widest">Order Summary</h3>
@@ -111,7 +111,7 @@ export default function CartPage() {
                   
                   <Link 
                     href="/checkout" 
-                    className="block text-center w-full bg-[var(--white)] text-[var(--navy)] py-5 font-black uppercase tracking-widest text-sm hover:bg-[var(--red)] hover:text-[var(--white)] hover:border-[var(--red)] border-2 border-[var(--white)] transition-colors"
+                    className="block text-center w-full bg-[var(--white)] text-[var(--navy)] py-5 font-black uppercase tracking-widest text-sm hover:bg-[var(--gold)] hover:text-[var(--white)] hover:border-[var(--gold)] border-2 border-[var(--white)] transition-colors"
                   >
                     Proceed to Checkout
                   </Link>

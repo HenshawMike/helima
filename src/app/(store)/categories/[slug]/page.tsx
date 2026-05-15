@@ -1,22 +1,33 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import ProductCard from '@/components/store/ProductCard';
-import { PRODUCTS } from '@/lib/dummy-data';
+import { getProductsByCategory } from '@/lib/firebase/firestore';
+import { Product } from '@/lib/dummy-data';
 
 export default function CategoryDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
-  const categoryProducts = PRODUCTS.filter(p => p.category.toLowerCase() === slug.toLowerCase());
+  const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getProductsByCategory(slug).then(products => {
+      setCategoryProducts(products);
+      setLoading(false);
+    });
+  }, [slug]);
+
+  if (loading) return <div className="min-h-screen bg-[var(--white)] pt-32 text-center text-[var(--navy)] font-bold">Loading...</div>;
 
   return (
     <div className="bg-[var(--white)] min-h-screen pt-16 pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-8">
-            <Link href="/categories" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--red)] transition-colors flex items-center gap-2">
+            <Link href="/categories" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--gold)] transition-colors flex items-center gap-2">
               <span>&larr;</span> All Categories
             </Link>
           </div>

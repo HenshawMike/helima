@@ -1,0 +1,21 @@
+import * as admin from 'firebase-admin';
+
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        // Handle escaped newlines in the private key string
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
+    });
+  } catch (error) {
+    console.error('Firebase admin initialization error', error);
+  }
+}
+
+const adminDb = admin.apps.length ? admin.firestore() : null;
+const adminAuth = admin.apps.length ? admin.auth() : null;
+
+export { adminDb, adminAuth };

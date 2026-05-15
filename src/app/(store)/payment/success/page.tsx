@@ -49,7 +49,7 @@ export default function PaymentSuccessPage() {
         </ScrollReveal>
 
         <ScrollReveal delay={300}>
-          <Link href="/" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--red)] transition-colors underline">
+          <Link href="/" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--gold)] transition-colors underline">
             Return to Homepage
           </Link>
         </ScrollReveal>

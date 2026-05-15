@@ -1,22 +1,34 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PRODUCTS } from '@/lib/dummy-data';
+import { getProductById } from '@/lib/firebase/firestore';
+import { Product } from '@/lib/dummy-data';
 import { useCart } from '@/context/CartContext';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function ProductDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const product = PRODUCTS.find((p) => p.id === id);
+  const [product, setProduct] = useState<Product | null>(null);
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  if (!product) {
-    notFound();
-  }
+  useEffect(() => {
+    getProductById(id).then(p => {
+      if (!p) {
+        notFound();
+      } else {
+        setProduct(p);
+      }
+      setLoading(false);
+    });
+  }, [id]);
+
+  if (loading) return <div className="min-h-screen bg-[var(--white)] pt-32 text-center text-[var(--navy)] font-bold">Loading...</div>;
+  if (!product) return null;
 
   const handleAddToCart = () => {
     addItem({ ...product, quantity });
@@ -29,7 +41,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-12">
-            <Link href="/products" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--red)] transition-colors flex items-center gap-2">
+            <Link href="/products" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--gold)] transition-colors flex items-center gap-2">
               <span>&larr;</span> Back to Catalog
             </Link>
           </div>
@@ -50,7 +62,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
           <div className="flex flex-col">
             <ScrollReveal delay={100}>
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-8 h-1 bg-[var(--red)]"></div>
+                <div className="w-8 h-1 bg-[var(--gold)]"></div>
                 <span className="font-bold text-sm tracking-widest uppercase text-[var(--navy)]">{product.category}</span>
               </div>
               

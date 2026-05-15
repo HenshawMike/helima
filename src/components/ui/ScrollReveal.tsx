@@ -39,20 +39,16 @@ export default function ScrollReveal({ children, className = '', delay = 0, dire
     };
   }, []);
 
-  const animationClass = 
-    direction === 'up' ? 'var(--animate-fade-up)' :
-    direction === 'right' ? 'var(--animate-slide-in-right)' : 
-    'var(--animate-fade-in)';
+  const directionClass = 
+    direction === 'up' ? 'reveal-up' : 
+    direction === 'right' ? 'reveal-right' : 
+    'reveal-in';
 
   return (
     <div
       ref={domRef}
-      className={`reveal-on-scroll ${isVisible ? 'is-visible' : ''} ${className}`}
-      style={{ 
-        animation: isVisible ? animationClass : 'none',
-        animationDelay: `${delay}ms`,
-        animationFillMode: 'forwards'
-      }}
+      className={`reveal-on-scroll ${directionClass} ${isVisible ? 'is-visible' : ''} ${className}`}
+      style={{ '--delay': `${delay}ms` } as React.CSSProperties}
     >
       {children}
     </div>

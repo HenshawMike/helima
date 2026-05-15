@@ -31,7 +31,7 @@ export default function ProductCard({ id, name, price, imageUrl, category }: Pro
           <div className="text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold">
             {category}
           </div>
-          <div className="w-1.5 h-1.5 bg-[var(--red)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="w-1.5 h-1.5 bg-[var(--gold)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
         
         <Link href={`/products/${id}`} className="block flex-grow">

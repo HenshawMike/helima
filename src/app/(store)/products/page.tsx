@@ -1,8 +1,17 @@
+'use client';
+
 import ProductCard from '@/components/store/ProductCard';
 import ScrollReveal from '@/components/ui/ScrollReveal';
-import { PRODUCTS } from '@/lib/dummy-data';
+import { getProducts } from '@/lib/firebase/firestore';
+import { Product } from '@/lib/dummy-data';
+import { useEffect, useState } from 'react';
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  
+  useEffect(() => {
+    getProducts().then(setProducts);
+  }, []);
   return (
     <div className="bg-[var(--white)] min-h-screen">
       {/* Header Section */}
@@ -25,7 +34,7 @@ export default function ProductsPage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {PRODUCTS.map((product, index) => (
+            {products.map((product, index) => (
               <ScrollReveal key={product.id} delay={(index % 4) * 100}>
                 <ProductCard {...product} />
               </ScrollReveal>

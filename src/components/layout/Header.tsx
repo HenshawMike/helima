@@ -17,17 +17,17 @@ export default function Header() {
             </Link>
           </div>
           <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-[var(--navy)] hover:text-[var(--red)] font-bold transition-colors uppercase text-sm tracking-widest">Home</Link>
-            <Link href="/products" className="text-[var(--navy)] hover:text-[var(--red)] font-bold transition-colors uppercase text-sm tracking-widest">Shop</Link>
-            <Link href="/categories" className="text-[var(--navy)] hover:text-[var(--red)] font-bold transition-colors uppercase text-sm tracking-widest">Categories</Link>
+            <Link href="/" className="text-[var(--navy)] hover:text-[var(--gold)] font-bold transition-colors uppercase text-sm tracking-widest">Home</Link>
+            <Link href="/products" className="text-[var(--navy)] hover:text-[var(--gold)] font-bold transition-colors uppercase text-sm tracking-widest">Shop</Link>
+            <Link href="/categories" className="text-[var(--navy)] hover:text-[var(--gold)] font-bold transition-colors uppercase text-sm tracking-widest">Categories</Link>
           </nav>
           <div className="flex items-center space-x-6">
-            <Link href="/cart" className="text-[var(--navy)] hover:text-[var(--red)] relative transition-colors group">
+            <Link href="/cart" className="text-[var(--navy)] hover:text-[var(--gold)] relative transition-colors group">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[var(--red)] text-[var(--white)] text-[10px] font-bold px-1.5 py-0.5 rounded-full group-hover:scale-110 transition-transform">
+                <span className="absolute -top-2 -right-2 bg-[var(--gold)] text-[var(--white)] text-[10px] font-bold px-1.5 py-0.5 rounded-full group-hover:scale-110 transition-transform">
                   {totalItems}
                 </span>
               )}

@@ -1,9 +1,18 @@
+'use client';
+
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import ProductCard from '@/components/store/ProductCard';
-import { FEATURED_PRODUCTS } from '@/lib/dummy-data';
+import { getFeaturedProducts } from '@/lib/firebase/firestore';
+import { Product } from '@/lib/dummy-data';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  
+  useEffect(() => {
+    getFeaturedProducts().then(setFeaturedProducts);
+  }, []);
   return (
     <div className="flex flex-col min-h-screen bg-[var(--white)] selection:bg-[var(--navy)] selection:text-[var(--white)]">
       {/* Hero Section */}
@@ -66,7 +75,7 @@ export default function Home() {
               </div>
             </ScrollReveal>
             <ScrollReveal delay={500}>
-              <div className="border-l-4 border-[var(--red)] pl-6">
+              <div className="border-l-4 border-[var(--gold)] pl-6">
                 <div className="text-[var(--navy)] font-black text-xl mb-2 uppercase tracking-widest">Support</div>
                 <p className="text-[var(--navy)] opacity-80 text-sm uppercase tracking-wide">Direct access</p>
               </div>
@@ -85,7 +94,7 @@ export default function Home() {
               </h2>
               <Link 
                 href="/products" 
-                className="text-[var(--navy)] font-black hover:text-[var(--red)] transition-colors uppercase tracking-widest text-sm flex items-center gap-4"
+                className="text-[var(--navy)] font-black hover:text-[var(--gold)] transition-colors uppercase tracking-widest text-sm flex items-center gap-4"
               >
                 All Products
                 <div className="w-8 h-0.5 bg-current"></div>
@@ -94,7 +103,7 @@ export default function Home() {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {FEATURED_PRODUCTS.map((product, index) => (
+            {featuredProducts.map((product, index) => (
               <ScrollReveal key={product.id} delay={index * 150}>
                 <ProductCard {...product} />
               </ScrollReveal>
@@ -107,7 +116,7 @@ export default function Home() {
       <section className="py-32 bg-[var(--navy)] text-[var(--white)] border-t-2 border-[var(--navy)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollReveal>
-            <div className="w-4 h-4 bg-[var(--red)] mx-auto mb-12"></div>
+            <div className="w-4 h-4 bg-[var(--gold)] mx-auto mb-12"></div>
             <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-8 leading-none">
               Elevate <br />
               Your Standard

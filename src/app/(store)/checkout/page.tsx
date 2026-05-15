@@ -27,29 +27,29 @@ export default function CheckoutPage() {
               <div className="mb-12 border-4 border-[var(--navy)] p-8">
                 <div className="flex items-center justify-between mb-8 border-b-2 border-[var(--navy)] pb-4">
                   <h2 className="text-2xl font-black text-[var(--navy)] uppercase tracking-widest">1. Contact & Shipping</h2>
-                  <span className="text-[var(--red)] font-bold text-sm uppercase">Pending</span>
+                  <span className="text-[var(--gold)] font-bold text-sm uppercase">Pending</span>
                 </div>
                 
                 <form className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-[var(--navy)] font-bold uppercase tracking-widest text-xs mb-2">First Name</label>
-                      <input type="text" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--red)] text-[var(--navy)] font-medium" />
+                      <input type="text" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--gold)] text-[var(--navy)] font-medium" />
                     </div>
                     <div>
                       <label className="block text-[var(--navy)] font-bold uppercase tracking-widest text-xs mb-2">Last Name</label>
-                      <input type="text" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--red)] text-[var(--navy)] font-medium" />
+                      <input type="text" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--gold)] text-[var(--navy)] font-medium" />
                     </div>
                   </div>
                   
                   <div>
                     <label className="block text-[var(--navy)] font-bold uppercase tracking-widest text-xs mb-2">Email</label>
-                    <input type="email" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--red)] text-[var(--navy)] font-medium" />
+                    <input type="email" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--gold)] text-[var(--navy)] font-medium" />
                   </div>
                   
                   <div>
                     <label className="block text-[var(--navy)] font-bold uppercase tracking-widest text-xs mb-2">Address</label>
-                    <input type="text" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--red)] text-[var(--navy)] font-medium" />
+                    <input type="text" className="w-full border-2 border-[var(--navy)] p-4 bg-transparent outline-none focus:border-[var(--gold)] text-[var(--navy)] font-medium" />
                   </div>
 
                   <div className="pt-6">
@@ -72,7 +72,7 @@ export default function CheckoutPage() {
                   <div className="space-y-6">
                     <p className="text-[var(--navy)] font-medium mb-6">This is a demo. In a real app, Stripe/Paystack elements would appear here.</p>
                     
-                    <Link href="/payment/success" className="block text-center w-full bg-[var(--red)] text-[var(--white)] py-5 font-black uppercase tracking-widest text-sm border-2 border-[var(--red)] hover:bg-[var(--navy)] hover:border-[var(--navy)] transition-colors">
+                    <Link href="/payment/success" className="block text-center w-full bg-[var(--gold)] text-[var(--white)] py-5 font-black uppercase tracking-widest text-sm border-2 border-[var(--gold)] hover:bg-[var(--navy)] hover:border-[var(--navy)] transition-colors">
                       Pay ${(totalPrice).toFixed(2)}
                     </Link>
                   </div>

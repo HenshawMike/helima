@@ -32,7 +32,7 @@ export default function CategoriesPage() {
                   <h2 className="text-3xl font-black text-[var(--navy)] group-hover:text-[var(--white)] uppercase tracking-tighter transition-colors">
                     {category.name}
                   </h2>
-                  <span className="text-[var(--navy)] group-hover:text-[var(--red)] font-bold text-xl transition-colors">
+                  <span className="text-[var(--navy)] group-hover:text-[var(--gold)] font-bold text-xl transition-colors">
                     &rarr;
                   </span>
                 </div>
