@@ -6,9 +6,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="font-bold text-2xl tracking-tighter text-[var(--white)] flex items-center gap-2 mb-6 uppercase">
-              <span className="w-8 h-8 bg-[var(--white)] text-[var(--navy)] flex items-center justify-center font-black">H</span>
-              ELIMA
+            <Link href="/" className="font-bold text-2xl tracking-tighter text-[var(--white)] flex items-center gap-3 mb-6 uppercase text-white">
+              <img src="/helima.png" alt="Helima" className="w-14 h-14 object-contain brightness-0 invert" />
+              HELIMA
             </Link>
             <p className="text-[var(--white)] opacity-80 max-w-sm leading-relaxed mb-6">
               Premium imported products. Simple checkout. WhatsApp support.
@@ -34,10 +34,10 @@ export default function Footer() {
               Support
             </h3>
             <ul className="space-y-4">
-              <li><a href="#" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">WhatsApp Support</a></li>
-              <li><a href="#" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">Track Order</a></li>
-              <li><a href="#" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">Shipping Policy</a></li>
-              <li><a href="#" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">Returns</a></li>
+              <li><a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">WhatsApp Support</a></li>
+              <li><Link href="/support/track-order" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">Track Order</Link></li>
+              <li><Link href="/support/shipping" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">Shipping Policy</Link></li>
+              <li><Link href="/support/returns" className="opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors inline-block uppercase text-sm">Returns</Link></li>
             </ul>
           </div>
         </div>

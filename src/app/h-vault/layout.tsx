@@ -37,13 +37,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         </div>
         <nav className="flex-1 p-4 space-y-2">
-          <Link href="/admin" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
+          <Link href="/h-vault" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
             Dashboard
           </Link>
-          <Link href="/admin/products" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
+          <Link href="/h-vault/products" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
             Products
           </Link>
-          <Link href="/admin/orders" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
+          <Link href="/h-vault/orders" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
             Orders
           </Link>
         </nav>

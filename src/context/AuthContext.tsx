@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, db } from '@/lib/firebase/config';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -11,6 +11,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signInWithGoogle: async () => {},
   signOut: async () => {},
+  deleteAccount: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -78,8 +80,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await auth.signOut();
   };
 
+  const deleteAccount = async () => {
+    if (!user || !db) return;
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await deleteDoc(userRef);
+      await user.delete();
+    } catch (error) {
+      console.error('Error deleting account', error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, dbUser, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, dbUser, loading, signInWithGoogle, signOut, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

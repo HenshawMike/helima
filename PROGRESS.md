@@ -1,41 +1,70 @@
-# Development Progress Log
+# Helima E-commerce - Development Progress
 
-This document serves as a comprehensive log of the architecture, features, and fixes implemented to establish the foundation of the Helima e-commerce platform.
+## 1. Accomplishments to Date
 
-## 1. Design System & UI Overhaul
-- **Strict Minimalism**: Completely stripped away soft elements (glassmorphism, radial gradients, soft shadows, and all shades of gray) to strictly enforce the brand's Navy, White, and Gold color palette.
-- **Harsh Aesthetics**: Replaced soft shadows with stark, solid-color offset borders on interactive elements like the `ProductCard`.
-- **Typography**: Enhanced the premium feel by utilizing heavy `font-black` uppercase tracking for headers, buttons, and navigation elements.
-- **Animation Fixes**: Resolved React re-rendering console warnings by migrating inline `animation` shorthand styles entirely to robust CSS classes in `globals.css` utilizing custom `--delay` variables.
+### Core Architecture & Design
+- **Design System**: Established a premium "Navy Blue, White, and Gold" minimalist aesthetic across all components.
+- **Responsive Layout**: Implemented a fully responsive storefront with a sticky header and dynamic footer.
+- **Scroll Animations**: Integrated `ScrollReveal` for a high-end, smooth user experience.
 
-## 2. Customer Flows & Page Scaffolding
-- **Global Cart State**: Built `CartContext.tsx` using the React Context API to manage cart operations (add, remove, update quantity, subtotal calculation) with automatic `localStorage` persistence.
-- **Storefront Pages**:
-  - `/` (Home): Featured products and minimal brand messaging.
-  - `/products`: Complete product catalog grid.
-  - `/products/[id]`: Split-layout product detail page with interactive cart additions.
-  - `/categories` & `/categories/[slug]`: Dynamic routing for browsing by category.
-- **Checkout Flows**:
-  - `/cart`: Dynamic cart review with live subtotaling.
-  - `/checkout`: Visual scaffold for the multi-step shipping and payment form.
-  - `/payment/success`: Order confirmation page featuring a "Message Helima on WhatsApp" button that pre-generates a WhatsApp payload.
-  - `/payment/failed`: Graceful failure state with retry and support options.
+### Authentication & User Management
+- **Google Authentication**: Seamless sign-in/sign-up via Firebase Auth.
+- **User Profiles**: Personalized `/profile` page with "Member Since" data and account identity.
+- **Security**: Implemented a irreversible account deletion feature that removes both Firestore records and Firebase Auth credentials.
+- **Logout Flow**: Integrated secure logout with automated redirects and UI state clearing.
 
-## 3. Backend Integration (Firebase)
-- **SDK Setup**: Installed and configured `firebase` (client) and `firebase-admin` (server).
-- **Environment Setup**: Created `.env.local.example` with the necessary variable structure for Firebase and payment providers.
-- **Authentication**:
-  - Built `AuthContext.tsx` to handle the Google Sign-In popup flow.
-  - Implemented logic so that upon first login, a user document is automatically created in the Firestore `users` collection with a default `role: 'customer'`.
-  - Built the `/login` page UI to initiate this flow.
-- **Firestore Data Access**:
-  - Created `firestore.ts` with helper functions to asynchronously query products (all, by ID, featured, and by category).
-  - Implemented a graceful fallback: If environment variables are missing, the app seamlessly serves local dummy data instead of breaking.
+### Storefront & Shopping Experience
+- **Product Catalog**: Dynamic product listing with category filtering and interactive product cards.
+- **Cart System**: Persistent cart management via `CartContext` and `localStorage` (key: `helima_cart`).
+- **Quick Add**: enabled users to add items directly to their cart from the home page or catalog.
+- **Product Resilience**: Implemented a robust dummy data fallback system in Firestore services to ensure the site is always functional even without a backend connection.
 
-## 4. Admin Workflows & Security
-- **Admin Routing Guard**: Created `src/app/admin/layout.tsx` to restrict access. It verifies that a user is both authenticated and has `role === 'admin'` in their Firestore document before rendering.
-- **Admin Pages**: Scaffolded the visual dashboards for `/admin`, `/admin/products`, and `/admin/orders`.
-- **Security Rules**: Wrote the `firestore.rules` file to enforce access control at the database level:
-  - Users can read/write their own documents, but cannot self-assign the `admin` role.
-  - Active products are publicly readable; inactive products and all modifications are restricted to admins.
-  - Customers can read/create their own orders; admins have global read/write access.
+### Support Infrastructure
+- **WhatsApp Support**: Direct "wa.me" integration for instant customer service.
+- **Support Pages**: 
+  - **Track Order**: Minimalist interface for order status lookups.
+  - **Shipping Policy**: Detailed logistics and delivery documentation.
+  - **Returns & Exchanges**: Clear 14-day return window guidelines.
+
+### Administrative Suite (The Vault)
+- **Obfuscated Route**: Moved the admin portal from `/admin` to a secure, non-guessable path at `/h-vault`.
+- **Inventory Management**: Full CRUD (Create, Read, Update, Delete) suite for managing products, including visibility toggles.
+- **Order Management**: Interface for viewing all transactions and updating fulfillment statuses.
+- **Security**: Strict role-based access control (RBAC) ensuring only `admin` users can access the vault.
+
+---
+
+## 2. Proposed Changes & Improvements
+
+### High Priority
+- **Payment Gateway Integration**: Replace current checkout placeholders with a production-ready provider (Stripe/Paystack).
+- **Checkout Workflow**: Build the multi-step checkout form (Shipping info -> Payment -> Order Success).
+- **User Order History**: Connect the `/profile` order list to the Firestore `orders` collection to show real user acquisitions.
+
+### Functional Enhancements
+- **WhatsApp Notifications**: Automate WhatsApp messages to customers when their order status changes to "Shipped" or "Delivered".
+- **Admin Analytics**: Implement real-time metrics (Revenue, Pending Orders, Top Sellers) on the `/h-vault` dashboard.
+- **Search Optimization**: Add a global search bar in the header for rapid product discovery.
+
+### Performance & Polishing
+- **Image Optimization**: Use Next.js `next/image` for all product and logo assets to reduce load times.
+- **Data Hydration**: Seed the Firestore database with actual product data to move away from dummy fallbacks.
+- **SEO Deep Dive**: Implement dynamic metadata for product pages to improve social sharing and search ranking.
+
+---
+
+## 3. What's Left to Do
+
+- [ ] **Checkout System**: 
+  - [ ] Implementation of Checkout Route Handler.
+  - [ ] Payment provider API integration.
+  - [ ] Success/Failure redirect pages.
+- [ ] **Data Management**: 
+  - [ ] Batch upload of real product inventory to Firestore.
+  - [ ] Order history fetching for authenticated users.
+- [ ] **Admin Features**: 
+  - [ ] Revenue tracking logic.
+  - [ ] Automated notification triggers.
+- [ ] **Deployment**: 
+  - [ ] Final environment variable configuration.
+  - [ ] Production build and domain linking.
