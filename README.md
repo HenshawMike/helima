@@ -1,35 +1,36 @@
-# Helima — Spec-Driven AI Development Pack
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-This folder is the project context for building **Helima**, an ecommerce website for selling products imported from China.
+## Getting Started
 
-The build must follow **spec-driven AI development using Markdown as the project context**.
+First, run the development server:
 
-## Meaning
-Do not build from memory, guesses, or assumptions.
-Build only from the Markdown specs in this folder.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Stack
-- Frontend: Next.js
-- Backend/Database/Auth/Storage: Firebase
-- Auth: Google Auth only
-- Admin: Admin dashboard for managing products and orders
-- Payment: In-app payment flow
-- After payment: Show WhatsApp link/button so customer can contact Helima with order details
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## How Antigravity should work
-1. Read all Markdown files first.
-2. Activate the project skills in `.agent/skills/`.
-3. Build feature by feature from the specs.
-4. When unclear, stop and ask instead of inventing.
-5. Update implementation notes after each completed task.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Folder Guide
-- `00-context/` — Product background and source of truth
-- `01-specs/` — Product and MVP requirements
-- `02-architecture/` — App architecture and tech decisions
-- `03-data/` — Firebase data model and security rules
-- `04-flows/` — User, admin, payment, and WhatsApp flows
-- `05-ui/` — Pages, components, and UI behavior
-- `06-agent-tasks/` — Step-by-step Antigravity build tasks
-- `07-rules/` — No-hallucination, security, and quality rules
-- `.agent/skills/` — Antigravity skills to activate
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

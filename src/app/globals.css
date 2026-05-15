@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+:root {
+  /* Strict Theme Palette */
+  --navy: #0A1128;
+  --white: #FFFFFF;
+  --red: #D90429;
+
+  /* Default Application Variables */
+  --background: var(--white);
+  --foreground: var(--navy);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-navy: var(--navy);
+  --color-white: var(--white);
+  --color-red: var(--red);
+  
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Animations for scroll reveals */
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in: fade-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-in-right: slide-in-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scroll Animation Utilities */
+.reveal-on-scroll {
+  opacity: 0;
+}
+
+.reveal-on-scroll.is-visible {
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Strict Solid Aesthetic */
+.solid-card {
+  background-color: var(--white);
+  border: 1px solid var(--navy);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.solid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 4px 4px 0 0 var(--navy);
+}
+
+
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
