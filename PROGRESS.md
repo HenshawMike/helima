@@ -30,7 +30,10 @@
 - **Obfuscated Route**: Moved the admin portal from `/admin` to a secure, non-guessable path at `/h-vault`.
 - **Inventory Management**: Full CRUD (Create, Read, Update, Delete) suite for managing products, including visibility toggles.
 - **Order Management**: Interface for viewing all transactions and updating fulfillment statuses.
-- **Security**: Strict role-based access control (RBAC) ensuring only `admin` users can access the vault.
+- **Roles-Based Access Control**: Replaced custom claims with a secure Firestore `roles/{uid}` collection, completely blockaded from client writes (`allow write: if false`) to prevent privilege escalation.
+- **Direct Admin Login Page**: Built a premium, direct Email & Password sign-in form within `/h-vault` that catches unauthenticated users, with active client-side checks that automatically sign out standard customer accounts to secure state.
+- **Admin CLI Utility**: Created `scripts/add-admin.js` to precreate or promote administrators in Firebase Auth and Firestore with a single terminal command.
+- **Global Auth Provider Integration**: Relocated the `<AuthProvider>` context wrapper to the global root `layout.tsx`, resolving sibling layout isolation loading freezes and enabling unified auth state across storefront and dashboard routes.
 
 ---
 
