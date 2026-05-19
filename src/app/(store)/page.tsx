@@ -52,7 +52,7 @@ export default function Home() {
                   <div className="absolute top-4 left-4 w-full h-full border-2 border-[var(--white)] opacity-50"></div>
                   <div 
                     className="absolute inset-0 bg-cover bg-center grayscale"
-                    style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=1000&auto=format&fit=crop)' }}
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=1000&auto=format&fit=crop')" }}
                   ></div>
                </div>
             </ScrollReveal>

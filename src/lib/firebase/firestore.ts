@@ -13,10 +13,54 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { db } from './config';
-import { PRODUCTS, FEATURED_PRODUCTS, Product } from '@/lib/dummy-data';
+import { Product } from '@/lib/dummy-data';
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+// ==========================================
+// CATEGORIES COLLECTION HELPERS
+// ==========================================
+
+export async function getCategories(): Promise<Category[]> {
+  if (!db) return [];
+  try {
+    const querySnapshot = await getDocs(collection(db, 'categories'));
+    const categories = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Category));
+    return categories;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+}
+
+export async function createCategory(name: string) {
+  if (!db) return;
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  return addDoc(collection(db, 'categories'), {
+    name,
+    slug,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function deleteCategory(id: string) {
+  if (!db) return;
+  return deleteDoc(doc(db, 'categories', id));
+}
+
+// ==========================================
+// PRODUCTS COLLECTION HELPERS
+// ==========================================
 
 export async function getProducts(): Promise<Product[]> {
-  if (!db) return PRODUCTS;
+  if (!db) return [];
   try {
     const q = query(
       collection(db, 'products'),
@@ -29,15 +73,15 @@ export async function getProducts(): Promise<Product[]> {
       ...doc.data()
     } as Product));
     
-    return products.length > 0 ? products : PRODUCTS;
+    return products;
   } catch (error) {
     console.error('Error fetching products:', error);
-    return PRODUCTS;
+    return [];
   }
 }
 
 export async function getAdminProducts(): Promise<Product[]> {
-  if (!db) return PRODUCTS;
+  if (!db) return [];
   try {
     const q = query(
       collection(db, 'products'),
@@ -50,7 +94,7 @@ export async function getAdminProducts(): Promise<Product[]> {
     } as Product));
   } catch (error) {
     console.error('Error fetching admin products:', error);
-    return PRODUCTS;
+    return [];
   }
 }
 
@@ -78,7 +122,7 @@ export async function deleteProduct(id: string) {
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
-  if (!db) return PRODUCTS.find(p => p.id === id) || null;
+  if (!db) return null;
   try {
     const docRef = doc(db, 'products', id);
     const docSnap = await getDoc(docRef);
@@ -88,12 +132,12 @@ export async function getProductById(id: string): Promise<Product | null> {
     return null;
   } catch (error) {
     console.error('Error fetching product by id:', error);
-    return PRODUCTS.find(p => p.id === id) || null;
+    return null;
   }
 }
 
 export async function getFeaturedProducts(count: number = 4): Promise<Product[]> {
-  if (!db) return FEATURED_PRODUCTS;
+  if (!db) return [];
   try {
     const q = query(
       collection(db, 'products'),
@@ -107,10 +151,10 @@ export async function getFeaturedProducts(count: number = 4): Promise<Product[]>
       ...doc.data()
     } as Product));
     
-    return products.length > 0 ? products : FEATURED_PRODUCTS;
+    return products;
   } catch (error) {
     console.error('Error fetching featured products:', error);
-    return FEATURED_PRODUCTS;
+    return [];
   }
 }
 
@@ -142,7 +186,7 @@ export async function updateOrderStatus(id: string, status: string) {
 }
 
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
-  if (!db) return PRODUCTS.filter(p => p.category.toLowerCase() === categorySlug.toLowerCase());
+  if (!db) return [];
   try {
     const q = query(
       collection(db, 'products'),
@@ -157,6 +201,6 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
     } as Product));
   } catch (error) {
     console.error('Error fetching products by category:', error);
-    return PRODUCTS.filter(p => p.category.toLowerCase() === categorySlug.toLowerCase());
+    return [];
   }
 }

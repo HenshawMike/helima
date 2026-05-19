@@ -157,6 +157,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/h-vault/products" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
             Products
           </Link>
+          <Link href="/h-vault/categories" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
+            Categories
+          </Link>
           <Link href="/h-vault/orders" className="block px-4 py-3 text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors">
             Orders
           </Link>

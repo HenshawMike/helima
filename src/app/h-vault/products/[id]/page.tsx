@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { getProductById, updateProduct } from '@/lib/firebase/firestore';
+import { getProductById, updateProduct, getCategories, Category } from '@/lib/firebase/firestore';
 
 export default function EditProductPage() {
   const router = useRouter();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -17,6 +18,10 @@ export default function EditProductPage() {
     description: '',
     isActive: true,
   });
+
+  useEffect(() => {
+    getCategories().then(setCategories);
+  }, []);
 
   useEffect(() => {
     async function loadProduct() {
@@ -76,7 +81,7 @@ export default function EditProductPage() {
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50">Price (USD)</label>
+            <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50">Price (NGN ₦)</label>
             <input 
               type="number" 
               step="0.01"
@@ -98,12 +103,15 @@ export default function EditProductPage() {
               className="w-full border-2 border-[var(--navy)] p-3 font-bold uppercase tracking-widest text-xs outline-none focus:bg-[var(--navy)] focus:text-white transition-all appearance-none"
             >
               <option value="">Select Category</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Fashion">Fashion</option>
-              <option value="Home">Home & Garden</option>
-              <option value="Furniture">Furniture</option>
-              <option value="Kitchen">Kitchen</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.slug}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
+            <div className="text-[9px] uppercase tracking-wider text-[var(--navy)] opacity-40 font-bold">
+              * Manage categories in the sidebar Vault
+            </div>
           </div>
           <div className="space-y-2">
             <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50">Image URL</label>

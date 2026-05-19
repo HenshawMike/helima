@@ -39,13 +39,13 @@ export default function CartPage() {
                 {items.map((item, index) => (
                   <ScrollReveal key={item.id} delay={index * 100}>
                     <div className="flex flex-col sm:flex-row gap-6 py-8 border-b-2 border-[var(--navy)]">
-                      <div className="w-32 h-32 border-2 border-[var(--navy)] flex-shrink-0 bg-cover bg-center grayscale" style={{ backgroundImage: `url(${item.imageUrl})` }}></div>
+                      <div className="w-32 h-32 border-2 border-[var(--navy)] flex-shrink-0 bg-cover bg-center grayscale" style={{ backgroundImage: `url('${item.imageUrl}')` }}></div>
                       
                       <div className="flex-grow flex flex-col justify-between">
                         <div className="flex justify-between items-start">
                           <div>
                             <h3 className="text-2xl font-black text-[var(--navy)] uppercase leading-tight mb-2">{item.name}</h3>
-                            <div className="text-[var(--navy)] font-bold">${item.price.toFixed(2)} each</div>
+                            <div className="text-[var(--navy)] font-bold">₦{item.price.toFixed(2)} each</div>
                           </div>
                           <button 
                             onClick={() => removeItem(item.id)}
@@ -74,7 +74,7 @@ export default function CartPage() {
                             </button>
                           </div>
                           <div className="text-2xl font-black text-[var(--navy)]">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            ₦{(item.price * item.quantity).toFixed(2)}
                           </div>
                         </div>
                       </div>
@@ -96,7 +96,7 @@ export default function CartPage() {
                   <div className="space-y-4 mb-8 font-medium">
                     <div className="flex justify-between">
                       <span className="uppercase text-sm tracking-widest">Subtotal</span>
-                      <span className="font-bold">${totalPrice.toFixed(2)}</span>
+                      <span className="font-bold">₦{totalPrice.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="uppercase text-sm tracking-widest">Shipping</span>
@@ -106,7 +106,7 @@ export default function CartPage() {
                   
                   <div className="border-t-2 border-[var(--white)] pt-6 mb-8 flex justify-between items-end">
                     <span className="uppercase text-sm tracking-widest">Total</span>
-                    <span className="text-4xl font-black">${totalPrice.toFixed(2)}</span>
+                    <span className="text-4xl font-black">₦{totalPrice.toFixed(2)}</span>
                   </div>
                   
                   <Link 

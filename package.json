@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "firebase": "firebase",
+    "deploy:rules": "firebase deploy --only firestore:rules,storage",
+    "deploy:indexes": "firebase deploy --only firestore:indexes",
+    "deploy:all": "firebase deploy"
   },
   "dependencies": {
     "firebase": "^12.13.0",
@@ -22,6 +26,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^10.3.0",
     "eslint-config-next": "16.2.6",
+    "firebase-tools": "^15.18.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"
   }

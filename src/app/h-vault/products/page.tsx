@@ -76,7 +76,7 @@ export default function AdminProductsPage() {
                     {product.name}
                   </h3>
                   <div className="text-[var(--navy)] group-hover:text-[var(--white)] font-bold text-sm">
-                    ${product.price.toFixed(2)}
+                    ₦{product.price.toFixed(2)}
                   </div>
                 </div>
               </div>

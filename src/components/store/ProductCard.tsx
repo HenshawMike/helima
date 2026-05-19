@@ -30,7 +30,7 @@ export default function ProductCard({ id, name, price, imageUrl, category }: Pro
         {/* Placeholder for actual next/image */}
         <div 
           className="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500"
-          style={{ backgroundImage: `url(${imageUrl})` }}
+          style={{ backgroundImage: `url('${imageUrl}')` }}
         />
         
         {/* Minimal Quick add button overlay */}
@@ -59,7 +59,7 @@ export default function ProductCard({ id, name, price, imageUrl, category }: Pro
         </Link>
         <div className="mt-6 flex items-center justify-between border-t border-[var(--navy)] pt-4">
           <span className="text-xl font-black text-[var(--navy)]">
-            ${price.toFixed(2)}
+            ₦{price.toFixed(2)}
           </span>
           <button 
             onClick={handleAddToCart}

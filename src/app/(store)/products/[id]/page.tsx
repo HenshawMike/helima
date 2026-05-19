@@ -53,7 +53,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
             <div className="w-full aspect-square border-2 border-[var(--navy)] relative overflow-hidden bg-[var(--white)]">
               <div 
                 className="absolute inset-0 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700"
-                style={{ backgroundImage: `url(${product.imageUrl})` }}
+                style={{ backgroundImage: `url('${product.imageUrl}')` }}
               />
             </div>
           </ScrollReveal>
@@ -74,7 +74,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
             <ScrollReveal delay={200}>
               <div className="border-t-4 border-[var(--navy)] py-6 mb-8">
                 <span className="text-4xl font-black text-[var(--navy)]">
-                  ${product.price.toFixed(2)}
+                  ₦{product.price.toFixed(2)}
                 </span>
               </div>
             </ScrollReveal>
