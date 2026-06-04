@@ -49,15 +49,15 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--white)] py-20 selection:bg-[var(--navy)] selection:text-[var(--white)]">
+    <div className="min-h-screen bg-[var(--white)] py-12 md:py-20 selection:bg-[var(--navy)] selection:text-[var(--white)]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="border-b-2 border-[var(--navy)] pb-8 mb-12 flex justify-between items-end">
+          <div className="border-b-2 border-[var(--navy)] pb-6 md:pb-8 mb-8 md:mb-12 flex justify-between items-end">
             <div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none">
+              <h1 className="text-3xl md:text-7xl font-black tracking-tighter uppercase leading-none">
                 Account
               </h1>
-              <p className="text-[var(--navy)] opacity-60 uppercase tracking-widest text-sm font-bold mt-4">
+              <p className="text-[var(--navy)] opacity-60 uppercase tracking-widest text-xs md:text-sm font-bold mt-3 md:mt-4">
                 Personal Workspace
               </p>
             </div>
@@ -70,17 +70,17 @@ export default function ProfilePage() {
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* User Info Card */}
           <ScrollReveal delay={200} className="md:col-span-1">
-            <div className="solid-card p-8">
-              <div className="w-20 h-20 bg-[var(--navy)] text-[var(--white)] flex items-center justify-center text-3xl font-black mb-6">
+            <div className="solid-card p-5 md:p-8">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-[var(--navy)] text-[var(--white)] flex items-center justify-center text-2xl md:text-3xl font-black mb-4 md:mb-6">
                 {user.displayName?.[0] || user.email?.[0] || 'U'}
               </div>
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 <div>
                   <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50 mb-1">Name</label>
-                  <p className="text-lg font-black text-[var(--navy)] uppercase leading-tight">
+                  <p className="text-base md:text-lg font-black text-[var(--navy)] uppercase leading-tight">
                     {user.displayName || 'Anonymous User'}
                   </p>
                 </div>
@@ -102,14 +102,14 @@ export default function ProfilePage() {
 
           {/* Activity/Orders Placeholder */}
           <ScrollReveal delay={400} className="md:col-span-2">
-            <div className="space-y-16">
+            <div className="space-y-10 md:space-y-16">
               <div className="space-y-8">
                 <div className="border-l-4 border-[var(--navy)] pl-6">
-                  <h2 className="text-2xl font-black text-[var(--navy)] uppercase tracking-tighter mb-2">Order History</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-[var(--navy)] uppercase tracking-tighter mb-2">Order History</h2>
                   <p className="text-sm font-medium text-[var(--navy)] opacity-60 uppercase tracking-wide">Manage your recent acquisitions</p>
                 </div>
 
-                <div className="border-2 border-[var(--navy)] border-dashed p-12 text-center">
+                <div className="border-2 border-[var(--navy)] border-dashed p-8 md:p-12 text-center">
                   <div className="w-12 h-12 border-2 border-[var(--navy)] flex items-center justify-center mx-auto mb-6 opacity-30">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -128,14 +128,14 @@ export default function ProfilePage() {
               {/* Danger Zone */}
               <div className="space-y-8 pt-8 border-t border-[var(--navy)] opacity-50 hover:opacity-100 transition-opacity">
                 <div className="border-l-4 border-red-600 pl-6">
-                  <h2 className="text-xl font-black text-red-600 uppercase tracking-tighter mb-2">Danger Zone</h2>
+                  <h2 className="text-lg md:text-xl font-black text-red-600 uppercase tracking-tighter mb-2">Danger Zone</h2>
                   <p className="text-xs font-medium text-[var(--navy)] opacity-60 uppercase tracking-wide">Irreversible account actions</p>
                 </div>
                 
                 <button 
                   onClick={handleDeleteAccount}
                   disabled={isDeleting}
-                  className="bg-red-600 text-white px-8 py-3 font-bold uppercase tracking-widest text-[10px] hover:bg-[var(--navy)] transition-colors disabled:opacity-50"
+                  className="bg-red-600 text-white px-6 py-2.5 md:px-8 md:py-3 font-bold uppercase tracking-widest text-[10px] hover:bg-[var(--navy)] transition-colors disabled:opacity-50"
                 >
                   {isDeleting ? 'Deleting...' : 'Delete My Account'}
                 </button>

@@ -16,20 +16,20 @@ export default function TrackOrder() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--white)] py-20 selection:bg-[var(--navy)] selection:text-[var(--white)]">
+    <div className="min-h-screen bg-[var(--white)] py-12 md:py-20 selection:bg-[var(--navy)] selection:text-[var(--white)]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="border-b-2 border-[var(--navy)] pb-8 mb-12">
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none">
+          <div className="border-b-2 border-[var(--navy)] pb-6 md:pb-8 mb-8 md:mb-12">
+            <h1 className="text-3xl md:text-7xl font-black tracking-tighter uppercase leading-none">
               Track <br /> Order
             </h1>
-            <p className="text-[var(--navy)] opacity-60 uppercase tracking-widest text-sm font-bold mt-4">
+            <p className="text-[var(--navy)] opacity-60 uppercase tracking-widest text-xs md:text-sm font-bold mt-3 md:mt-4">
               Real-time Acquisition Status
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
           <ScrollReveal delay={200}>
             <form onSubmit={handleTrack} className="space-y-8">
               <div>
@@ -39,13 +39,13 @@ export default function TrackOrder() {
                   value={orderId}
                   onChange={(e) => setOrderId(e.target.value)}
                   placeholder="HLM-XXXXXX"
-                  className="w-full bg-[var(--white)] border-2 border-[var(--navy)] p-4 font-bold uppercase tracking-widest text-sm focus:bg-[var(--navy)] focus:text-[var(--white)] transition-all outline-none"
+                  className="w-full bg-[var(--white)] border-2 border-[var(--navy)] p-3 md:p-4 font-bold uppercase tracking-widest text-xs md:text-sm focus:bg-[var(--navy)] focus:text-[var(--white)] transition-all outline-none"
                   required
                 />
               </div>
               <button 
                 type="submit"
-                className="w-full bg-[var(--navy)] text-[var(--white)] py-5 font-black uppercase tracking-widest text-sm hover:bg-[var(--gold)] transition-colors border-2 border-[var(--navy)]"
+                className="w-full bg-[var(--navy)] text-[var(--white)] py-3.5 md:py-5 font-black uppercase tracking-widest text-xs md:text-sm hover:bg-[var(--gold)] transition-colors border-2 border-[var(--navy)]"
               >
                 Trace Order
               </button>

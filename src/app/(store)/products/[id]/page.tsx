@@ -4,7 +4,7 @@ import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getProductById } from '@/lib/firebase/firestore';
-import { Product } from '@/lib/dummy-data';
+
 import { useCart } from '@/context/CartContext';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
@@ -15,6 +15,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     getProductById(id).then(p => {
@@ -27,7 +28,40 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
     });
   }, [id]);
 
-  if (loading) return <div className="min-h-screen bg-[var(--white)] pt-32 text-center text-[var(--navy)] font-bold">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="bg-[var(--white)] min-h-screen pt-8 md:pt-12 pb-20 md:pb-32 animate-pulse">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <div className="h-4 w-32 bg-gray-200 rounded" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-start">
+            {/* Image Skeleton */}
+            <div className="w-full aspect-square border-2 border-gray-200 bg-gray-100 rounded" />
+            {/* Content Skeleton */}
+            <div className="space-y-6">
+              <div>
+                <div className="h-4 w-24 bg-gray-200 rounded mb-2" />
+                <div className="h-10 w-3/4 bg-gray-200 rounded mb-4" />
+              </div>
+              <div className="border-t-4 border-gray-200 py-4 md:py-6 mb-6 md:mb-8">
+                <div className="h-8 w-32 bg-gray-200 rounded" />
+              </div>
+              <div className="space-y-3">
+                <div className="h-4 w-full bg-gray-200 rounded" />
+                <div className="h-4 w-5/6 bg-gray-200 rounded" />
+                <div className="h-4 w-4/5 bg-gray-200 rounded" />
+              </div>
+              <div className="flex items-center gap-4 md:gap-6 pt-4">
+                <div className="h-10 w-32 bg-gray-200 rounded border-2 border-gray-200" />
+              </div>
+              <div className="h-14 w-full bg-gray-200 rounded mt-6" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (!product) return null;
 
   const handleAddToCart = () => {
@@ -37,23 +71,31 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
   };
 
   return (
-    <div className="bg-[var(--white)] min-h-screen pt-12 pb-32">
+    <div className="bg-[var(--white)] min-h-screen pt-8 md:pt-12 pb-20 md:pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-12">
-            <Link href="/products" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--gold)] transition-colors flex items-center gap-2">
+            <Link href="/products" className="text-[var(--navy)] font-bold uppercase tracking-widest text-xs md:text-sm hover:text-[var(--gold)] transition-colors flex items-center gap-2">
               <span>&larr;</span> Back to Catalog
             </Link>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-start">
           {/* Image Column */}
           <ScrollReveal direction="in">
-            <div className="w-full aspect-square border-2 border-[var(--navy)] relative overflow-hidden bg-[var(--white)]">
-              <div 
-                className="absolute inset-0 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700"
-                style={{ backgroundImage: `url('${product.imageUrl}')` }}
+            <div className="w-full aspect-square border-2 border-[var(--navy)] relative overflow-hidden bg-gray-100">
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+              )}
+              <img 
+                src={product.imageUrl}
+                alt={product.name}
+                loading="lazy"
+                onLoad={() => setImageLoaded(true)}
+                className={`absolute inset-0 w-full h-full object-cover max-md:grayscale-0 md:grayscale hover:grayscale-0 transition-all duration-700 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
               />
             </div>
           </ScrollReveal>
@@ -66,40 +108,40 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
                 <span className="font-bold text-sm tracking-widest uppercase text-[var(--navy)]">{product.category}</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase text-[var(--navy)] leading-none mb-8">
+              <h1 className="text-3xl md:text-7xl font-black tracking-tighter uppercase text-[var(--navy)] leading-none mb-5 md:mb-8">
                 {product.name}
               </h1>
             </ScrollReveal>
 
             <ScrollReveal delay={200}>
-              <div className="border-t-4 border-[var(--navy)] py-6 mb-8">
-                <span className="text-4xl font-black text-[var(--navy)]">
+              <div className="border-t-4 border-[var(--navy)] py-4 md:py-6 mb-6 md:mb-8">
+                <span className="text-3xl md:text-4xl font-black text-[var(--navy)]">
                   ₦{product.price.toFixed(2)}
                 </span>
               </div>
             </ScrollReveal>
 
             <ScrollReveal delay={300}>
-              <p className="text-[var(--navy)] text-lg leading-relaxed font-medium mb-12">
+              <p className="text-[var(--navy)] text-base md:text-lg leading-relaxed font-medium mb-8 md:mb-12">
                 {product.description}
               </p>
             </ScrollReveal>
 
             <ScrollReveal delay={400}>
-              <div className="flex items-center gap-6 mb-8">
+              <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
                 <div className="flex border-2 border-[var(--navy)]">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-12 h-12 flex items-center justify-center text-[var(--navy)] font-bold hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors"
+                    className="w-10 md:w-12 h-10 md:h-12 flex items-center justify-center text-[var(--navy)] font-bold hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors"
                   >
                     -
                   </button>
-                  <div className="w-16 h-12 flex items-center justify-center text-[var(--navy)] font-black text-xl border-x-2 border-[var(--navy)]">
+                  <div className="w-12 md:w-16 h-10 md:h-12 flex items-center justify-center text-[var(--navy)] font-black text-lg md:text-xl border-x-2 border-[var(--navy)]">
                     {quantity}
                   </div>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-12 h-12 flex items-center justify-center text-[var(--navy)] font-bold hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors"
+                    className="w-10 md:w-12 h-10 md:h-12 flex items-center justify-center text-[var(--navy)] font-bold hover:bg-[var(--navy)] hover:text-[var(--white)] transition-colors"
                   >
                     +
                   </button>
@@ -112,7 +154,7 @@ export default function ProductDetailsPage({ params }: { params: Promise<{ id: s
 
               <button 
                 onClick={handleAddToCart}
-                className="w-full bg-[var(--navy)] text-[var(--white)] py-6 font-black uppercase tracking-widest text-lg border-2 border-[var(--navy)] hover:bg-[var(--white)] hover:text-[var(--navy)] transition-all relative overflow-hidden"
+                className="w-full bg-[var(--navy)] text-[var(--white)] py-4 md:py-6 font-black uppercase tracking-widest text-base md:text-lg border-2 border-[var(--navy)] hover:bg-[var(--white)] hover:text-[var(--navy)] transition-all relative overflow-hidden"
               >
                 {isAdded ? 'Added to Cart ✓' : 'Add to Cart'}
               </button>

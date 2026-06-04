@@ -13,7 +13,17 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { db } from './config';
-import { Product } from '@/lib/dummy-data';
+
+
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  imageUrl: string;
+  category: string;
+  isActive?: boolean;
+}
 
 export interface Category {
   id: string;

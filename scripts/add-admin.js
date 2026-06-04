@@ -107,11 +107,8 @@ async function run() {
     if (error.code === 'auth/user-not-found') {
       // User doesn't exist, we must create a new one
       if (!password) {
-        console.error('\x1b[31mError: Account does not exist. A password is required to create a new user account.\x1b[0m');
-        console.error('Usage: \x1b[32mnode scripts/add-admin.js <email> <password> [displayName]\x1b[0m');
-        process.exit(1);
-      }
-      if (password.length < 6) {
+        console.log('No password provided. Creating a passwordless account (ideal for users signing up via Google)...');
+      } else if (password.length < 6) {
         console.error('\x1b[31mError: Password must be at least 6 characters long.\x1b[0m');
         process.exit(1);
       }
@@ -125,13 +122,16 @@ async function run() {
   // B. Create the user in Firebase Auth if they don't exist
   if (isNewUser) {
     try {
-      userRecord = await auth.createUser({
+      const createData = {
         email,
-        password,
         displayName,
         emailVerified: true,
-      });
-      console.log(`\x1b[32mSuccessfully created new account in Firebase Auth (UID: ${userRecord.uid})\x1b[0m`);
+      };
+      if (password) {
+        createData.password = password;
+      }
+      userRecord = await auth.createUser(createData);
+      console.log(`\x1b[32mSuccessfully created new ${password ? 'password-based' : 'passwordless'} account in Firebase Auth (UID: ${userRecord.uid})\x1b[0m`);
     } catch (error) {
       console.error('\x1b[31mError creating user in Firebase Auth:\x1b[0m', error.message);
       process.exit(1);

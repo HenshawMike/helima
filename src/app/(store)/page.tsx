@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import ProductCard from '@/components/store/ProductCard';
-import { getFeaturedProducts } from '@/lib/firebase/firestore';
-import { Product } from '@/lib/dummy-data';
+import { getFeaturedProducts, Product } from '@/lib/firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -18,28 +17,28 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-[var(--white)] selection:bg-[var(--navy)] selection:text-[var(--white)]">
       {/* Hero Section */}
-      <section className="bg-[var(--navy)] text-[var(--white)] pt-20 pb-20 border-b-2 border-[var(--navy)]">
+      <section className="bg-[var(--navy)] text-[var(--white)] pt-12 pb-12 md:pt-20 md:pb-20 border-b-2 border-[var(--navy)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12">
             <div className="max-w-2xl">
               <ScrollReveal delay={300}>
-                <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none mb-8 uppercase">
+                <h1 className="text-3xl md:text-7xl font-black tracking-tighter leading-none mb-5 md:mb-8 uppercase">
                   Curated <br />
                   Imports
                 </h1>
               </ScrollReveal>
               
               <ScrollReveal delay={500}>
-                <p className="text-lg max-w-md leading-relaxed font-medium opacity-90 mb-12">
+                <p className="text-base md:text-lg max-w-md leading-relaxed font-medium opacity-90 mb-8 md:mb-12">
                   Exceptional goods sourced globally. Delivered directly to you with uncompromising standards.
                 </p>
               </ScrollReveal>
               
               <ScrollReveal delay={700}>
-                <div className="flex flex-wrap gap-6">
+                <div className="flex flex-wrap gap-4 md:gap-6">
                   <Link 
                     href="/products" 
-                    className="bg-[var(--white)] text-[var(--navy)] px-8 py-4 font-black uppercase tracking-widest text-sm transition-transform hover:translate-x-1"
+                    className="bg-[var(--white)] text-[var(--navy)] px-6 py-3 md:px-8 md:py-4 font-black uppercase tracking-widest text-xs md:text-sm transition-transform hover:translate-x-1"
                   >
                     View Catalog
                   </Link>
@@ -61,24 +60,24 @@ export default function Home() {
       </section>
 
       {/* Strict Minimal Features */}
-      <div className="bg-[var(--white)] border-b-2 border-[var(--navy)] py-12">
+      <div className="bg-[var(--white)] border-b-2 border-[var(--navy)] py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <ScrollReveal delay={100}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
+            <ScrollReveal delay={300}>
               <div className="border-l-4 border-[var(--navy)] pl-6">
-                <div className="text-[var(--navy)] font-black text-xl mb-2 uppercase tracking-widest">Quality</div>
+                <div className="text-[var(--navy)] font-black text-base md:text-xl mb-1 md:mb-2 uppercase tracking-widest">Quality</div>
                 <p className="text-[var(--navy)] opacity-80 text-sm uppercase tracking-wide">Verified origin</p>
               </div>
             </ScrollReveal>
-            <ScrollReveal delay={300}>
+            <ScrollReveal delay={400}>
               <div className="border-l-4 border-[var(--navy)] pl-6">
-                <div className="text-[var(--navy)] font-black text-xl mb-2 uppercase tracking-widest">Secure</div>
+                <div className="text-[var(--navy)] font-black text-base md:text-xl mb-1 md:mb-2 uppercase tracking-widest">Secure</div>
                 <p className="text-[var(--navy)] opacity-80 text-sm uppercase tracking-wide">Encrypted transactions</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={500}>
               <div className="border-l-4 border-[var(--gold)] pl-6">
-                <div className="text-[var(--navy)] font-black text-xl mb-2 uppercase tracking-widest">Support</div>
+                <div className="text-[var(--navy)] font-black text-base md:text-xl mb-1 md:mb-2 uppercase tracking-widest">Support</div>
                 <p className="text-[var(--navy)] opacity-80 text-sm uppercase tracking-wide">Direct access</p>
               </div>
             </ScrollReveal>
@@ -87,24 +86,23 @@ export default function Home() {
       </div>
 
       {/* Featured Products */}
-      <section className="py-20 bg-[var(--white)]">
+      <section className="py-12 md:py-20 bg-[var(--white)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 border-b-2 border-[var(--navy)] pb-8">
-              <h2 className="text-4xl md:text-6xl font-black text-[var(--navy)] tracking-tighter uppercase">
-                Featured
-              </h2>
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-20 gap-6 md:gap-8 border-b-2 border-[var(--navy)] pb-2 md:pb-6">
               <Link 
                 href="/products" 
                 className="text-[var(--navy)] font-black hover:text-[var(--gold)] transition-colors uppercase tracking-widest text-sm flex items-center gap-4"
               >
-                All Products
+                <h2 className="text-2xl md:text-4xl font-black text-[var(--navy)] tracking-tighter uppercase">
+                  All Products</h2>
                 <div className="w-8 h-0.5 bg-current"></div>
               </Link>
+              
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {featuredProducts.map((product, index) => (
               <ScrollReveal key={product.id} delay={index * 150}>
                 <ProductCard {...product} />
@@ -115,15 +113,15 @@ export default function Home() {
       </section>
 
       {/* Final CTA - Restored to Strict Minimalist Style */}
-      <section className="py-20 bg-[var(--navy)] text-[var(--white)] border-t-2 border-[var(--navy)] max-h-[800px] flex items-center">
+      <section className="py-12 md:py-20 bg-[var(--navy)] text-[var(--white)] border-t-2 border-[var(--navy)] max-h-[800px] flex items-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
           <ScrollReveal>
-            <div className="w-4 h-4 bg-[var(--gold)] mx-auto mb-10"></div>
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase mb-8 leading-none">
+            <div className="w-3 h-3 md:w-4 md:h-4 bg-[var(--gold)] mx-auto mb-6 md:mb-10"></div>
+            <h2 className="text-3xl md:text-6xl font-black tracking-tighter uppercase mb-5 md:mb-8 leading-none">
               Elevate <br />
               Your Standard
             </h2>
-            <p className="text-lg opacity-70 font-medium mb-12 max-w-xl mx-auto uppercase tracking-widest">
+            <p className="text-sm md:text-lg opacity-70 font-medium mb-8 md:mb-12 max-w-xl mx-auto uppercase tracking-widest">
               Settle for nothing less than absolute quality.
             </p>
           </ScrollReveal>
@@ -132,14 +130,14 @@ export default function Home() {
             {user ? (
               <Link 
                 href="/profile" 
-                className="inline-block bg-[var(--white)] text-[var(--navy)] px-12 py-5 font-black uppercase tracking-widest text-sm hover:bg-[var(--gold)] hover:text-[var(--white)] border-2 border-[var(--white)] transition-colors"
+                className="inline-block bg-[var(--white)] text-[var(--navy)] px-8 py-3 md:px-12 md:py-5 font-black uppercase tracking-widest text-xs md:text-sm hover:bg-[var(--gold)] hover:text-[var(--white)] border-2 border-[var(--white)] transition-colors"
               >
                 View Account
               </Link>
             ) : (
               <Link 
                 href="/login" 
-                className="inline-block bg-[var(--white)] text-[var(--navy)] px-12 py-5 font-black uppercase tracking-widest text-sm hover:bg-[var(--gold)] hover:text-[var(--white)] border-2 border-[var(--white)] transition-colors"
+                className="inline-block bg-[var(--white)] text-[var(--navy)] px-8 py-3 md:px-12 md:py-5 font-black uppercase tracking-widest text-xs md:text-sm hover:bg-[var(--gold)] border-2 border-[var(--white)] transition-colors"
               >
                 Sign In
               </Link>

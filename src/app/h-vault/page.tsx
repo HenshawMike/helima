@@ -56,7 +56,7 @@ export default function AdminDashboard() {
         Overview
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-12">
         <div className="border-4 border-[var(--navy)] p-6 bg-[var(--navy)] text-[var(--white)] relative overflow-hidden">
           <div className="absolute top-2 right-2 w-2 h-2 bg-[var(--gold)]"></div>
           <h2 className="uppercase tracking-widest text-xs font-bold mb-2 opacity-80">Total Revenue</h2>
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="border-4 border-[var(--navy)] p-8 bg-white">
+      <div className="border-4 border-[var(--navy)] p-4 sm:p-6 md:p-8 bg-white">
         <h2 className="text-2xl font-black text-[var(--navy)] tracking-tighter uppercase mb-6 border-b-2 border-[var(--navy)] pb-2">
           Recent Activity
         </h2>
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
         ) : (
           <div className="divide-y-2 divide-[var(--navy)]">
             {recentOrders.map((order) => (
-              <div key={order.id} className="py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div key={order.id} className="py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-4">
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-xs text-[var(--navy)] opacity-60">#{order.id.slice(0, 8)}</span>
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
                     {new Date(order.createdAt).toLocaleDateString()} &bull; {order.items?.length || 0} items
                   </div>
                 </div>
-                <div className="flex items-center gap-4 self-end md:self-center">
+                <div className="w-full md:w-auto flex justify-between md:justify-end items-center gap-4 mt-2 md:mt-0">
                   <span className="font-black text-[var(--navy)] text-md">₦{order.totalPrice?.toFixed(2)}</span>
                   <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border-2 ${
                     order.status === 'paid'

@@ -13,6 +13,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<void>;
+  getIdToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   signInWithEmail: async () => {},
   signOut: async () => {},
   deleteAccount: async () => {},
+  getIdToken: async () => null,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -133,8 +135,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getIdToken = async () => {
+    if (!user) return null;
+    try {
+      return await user.getIdToken();
+    } catch (error) {
+      console.error('Error getting ID token:', error);
+      return null;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, dbUser, loading, signInWithGoogle, signInWithEmail, signOut, deleteAccount }}>
+    <AuthContext.Provider value={{ user, dbUser, loading, signInWithGoogle, signInWithEmail, signOut, deleteAccount, getIdToken }}>
       {children}
     </AuthContext.Provider>
   );

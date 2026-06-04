@@ -3,9 +3,9 @@
 import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/ScrollReveal';
-import ProductCard from '@/components/store/ProductCard';
-import { getProductsByCategory } from '@/lib/firebase/firestore';
-import { Product } from '@/lib/dummy-data';
+import ProductCard, { ProductCardSkeleton } from '@/components/store/ProductCard';
+import { getProductsByCategory, Product } from '@/lib/firebase/firestore';
+
 
 export default function CategoryDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -20,13 +20,11 @@ export default function CategoryDetailsPage({ params }: { params: Promise<{ slug
     });
   }, [slug]);
 
-  if (loading) return <div className="min-h-screen bg-[var(--white)] pt-32 text-center text-[var(--navy)] font-bold">Loading...</div>;
-
   return (
-    <div className="bg-[var(--white)] min-h-screen pt-16 pb-32">
+    <div className="bg-[var(--white)] min-h-screen pt-10 pb-22">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="mb-8">
+          <div className="mb-2">
             <Link href="/categories" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--gold)] transition-colors flex items-center gap-2">
               <span>&larr;</span> All Categories
             </Link>
@@ -37,8 +35,14 @@ export default function CategoryDetailsPage({ params }: { params: Promise<{ slug
           </h1>
         </ScrollReveal>
 
-        {categoryProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mt-12">
+            {[...Array(4)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : categoryProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mt-12">
             {categoryProducts.map((product, index) => (
               <ScrollReveal key={product.id} delay={index * 100}>
                 <ProductCard {...product} />

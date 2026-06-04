@@ -17,7 +17,7 @@ function SuccessContent() {
   const [verified, setVerified] = useState(false);
   const hasCalled = useRef(false);
 
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '1234567890';
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '+2348166707276';
   const message = encodeURIComponent(`Hello Helima! I just completed my order online (Paystack Ref: ${reference || 'N/A'}). I would like to coordinate shipping.`);
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 

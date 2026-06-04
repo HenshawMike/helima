@@ -1,29 +1,157 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase/admin';
+import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { paymentLimiter, getClientIp } from '@/lib/rate-limit';
+
+// ─── Input validation helpers ───────────────────────────────────
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_ITEMS = 50;
+const MAX_METADATA_LENGTH = 500;
+
+interface CartItemPayload {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  imageUrl: string;
+}
+
+function isValidCartItem(item: unknown): item is CartItemPayload {
+  if (!item || typeof item !== 'object') return false;
+  const obj = item as Record<string, unknown>;
+  return (
+    typeof obj.id === 'string' && obj.id.length > 0 && obj.id.length <= 128 &&
+    typeof obj.name === 'string' && obj.name.length > 0 &&
+    typeof obj.price === 'number' && obj.price > 0 &&
+    typeof obj.quantity === 'number' && Number.isInteger(obj.quantity) && obj.quantity > 0 && obj.quantity <= 100
+  );
+}
+
+function sanitizeString(value: unknown, maxLength = MAX_METADATA_LENGTH): string {
+  if (typeof value !== 'string') return '';
+  return value.trim().slice(0, maxLength);
+}
 
 export async function POST(request: Request) {
   try {
-    const { email, amount, metadata, items } = await request.json();
+    // ── Rate limiting ──────────────────────────────────────────
+    const clientIp = getClientIp(request);
+    const rateLimitResult = await paymentLimiter.check(clientIp);
 
-    if (!email || !amount) {
-      return NextResponse.json({ error: 'Email and amount are required' }, { status: 400 });
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please wait before trying again.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
+
+    // ── Parse and validate body ────────────────────────────────
+    const body = await request.json();
+    const { email, metadata, items, authToken } = body;
+
+    if (!email || !EMAIL_RE.test(email)) {
+      return NextResponse.json({ error: 'A valid email address is required.' }, { status: 400 });
+    }
+
+    if (!items || !Array.isArray(items) || items.length === 0 || items.length > MAX_ITEMS) {
+      return NextResponse.json({ error: 'A valid items array is required (1-50 items).' }, { status: 400 });
+    }
+
+    for (const item of items) {
+      if (!isValidCartItem(item)) {
+        return NextResponse.json({ error: 'One or more cart items are invalid.' }, { status: 400 });
+      }
     }
 
     if (!adminDb) {
-      return NextResponse.json({ error: 'Firebase Admin not initialized' }, { status: 500 });
+      return NextResponse.json({ error: 'Server configuration error.' }, { status: 500 });
     }
 
+    // ── Verify Firebase auth token (optional but recorded) ────
+    let verifiedUserId: string | null = null;
+    if (authToken && adminAuth) {
+      try {
+        const decodedToken = await adminAuth.verifyIdToken(authToken);
+        verifiedUserId = decodedToken.uid;
+      } catch {
+        // Token invalid or expired — proceed but don't attach userId
+        console.warn('Invalid auth token received in checkout');
+      }
+    }
+
+    // ── Server-side price verification ─────────────────────────
+    // CRITICAL: Never trust client-submitted prices. Fetch real
+    // prices from Firestore and recompute the total.
+    let serverTotal = 0;
+    const verifiedItems: Array<{
+      id: string;
+      name: string;
+      price: number;
+      quantity: number;
+      imageUrl: string;
+    }> = [];
+
+    for (const item of items) {
+      const productDoc = await adminDb.collection('products').doc(item.id).get();
+
+      if (!productDoc.exists) {
+        return NextResponse.json(
+          { error: `Product "${item.name}" is no longer available.` },
+          { status: 400 }
+        );
+      }
+
+      const productData = productDoc.data();
+
+      if (!productData?.isActive) {
+        return NextResponse.json(
+          { error: `Product "${item.name}" is currently unavailable.` },
+          { status: 400 }
+        );
+      }
+
+      const serverPrice = productData.price;
+      if (typeof serverPrice !== 'number' || serverPrice <= 0) {
+        return NextResponse.json(
+          { error: `Product "${item.name}" has an invalid price configuration.` },
+          { status: 500 }
+        );
+      }
+
+      serverTotal += serverPrice * item.quantity;
+
+      verifiedItems.push({
+        id: item.id,
+        name: productData.name || item.name,
+        price: serverPrice,
+        quantity: item.quantity,
+        imageUrl: productData.imageUrl || item.imageUrl || '',
+      });
+    }
+
+    // ── Paystack configuration ─────────────────────────────────
     const paystackSecret = process.env.PAYMENT_SECRET_KEY;
     if (!paystackSecret || paystackSecret.startsWith('TODO')) {
-      return NextResponse.json({ error: 'Paystack secret key is not configured' }, { status: 500 });
+      return NextResponse.json({ error: 'Payment provider is not configured.' }, { status: 500 });
     }
 
     // 1. Create a secure Firestore order document with auto-ID
     const orderRef = adminDb.collection('orders').doc();
     const orderId = orderRef.id;
 
-    // Convert amount to kobo (Paystack expects standard amounts in lowest currency unit)
-    const paystackAmount = Math.round(amount * 100);
+    // Convert amount to kobo (Paystack expects amounts in lowest currency unit)
+    const paystackAmount = Math.round(serverTotal * 100);
+
+    // Sanitize metadata strings
+    const safeFirstName = sanitizeString(metadata?.firstName);
+    const safeLastName = sanitizeString(metadata?.lastName);
+    const safeAddress = sanitizeString(metadata?.shippingAddress);
+    const safePhone = sanitizeString(metadata?.phoneNumber, 20);
 
     // 2. Initialize transaction with Paystack
     const callbackUrl = `${new URL(request.url).origin}/payment/success`;
@@ -36,6 +164,8 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         email,
         amount: paystackAmount,
+        currency: 'NGN',
+        channels: ['card', 'bank', 'ussd', 'bank_transfer'],
         callback_url: callbackUrl,
         metadata: {
           orderId,
@@ -46,7 +176,10 @@ export async function POST(request: Request) {
               value: orderId,
             },
           ],
-          ...metadata,
+          firstName: safeFirstName,
+          lastName: safeLastName,
+          shippingAddress: safeAddress,
+          phoneNumber: safePhone,
         },
       }),
     });
@@ -55,18 +188,29 @@ export async function POST(request: Request) {
 
     if (!paystackResponse.ok || !paystackData.status) {
       console.error('Paystack initialization failed:', paystackData);
-      return NextResponse.json({ error: paystackData.message || 'Paystack initialization failed' }, { status: 500 });
+
+      // Surface a clearer message for known Paystack issues
+      const psMessage = paystackData?.message || '';
+      if (psMessage.includes('active channel')) {
+        return NextResponse.json(
+          { error: 'Payment channels are not yet activated. The merchant must enable payment methods on the Paystack dashboard.' },
+          { status: 503 }
+        );
+      }
+
+      return NextResponse.json({ error: 'Payment initialization failed. Please try again.' }, { status: 500 });
     }
 
-    // 3. Save order details to Firestore
+    // 3. Save verified order details to Firestore
     await orderRef.set({
       id: orderId,
+      ...(verifiedUserId ? { userId: verifiedUserId } : {}),
       customerEmail: email,
-      customerName: `${metadata?.firstName || ''} ${metadata?.lastName || ''}`.trim() || 'Anonymous',
-      shippingAddress: metadata?.shippingAddress || 'N/A',
-      phoneNumber: metadata?.phoneNumber || 'N/A',
-      items: items || [],
-      totalPrice: amount,
+      customerName: `${safeFirstName} ${safeLastName}`.trim() || 'Anonymous',
+      shippingAddress: safeAddress || 'N/A',
+      phoneNumber: safePhone || 'N/A',
+      items: verifiedItems,
+      totalPrice: serverTotal,
       currency: 'NGN',
       status: 'pending',
       paystackReference: paystackData.data.reference,
@@ -79,8 +223,8 @@ export async function POST(request: Request) {
       reference: paystackData.data.reference,
       orderId,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Paystack initialize route error:', error);
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

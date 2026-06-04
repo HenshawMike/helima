@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/ScrollReveal';
-import { getCategories, getProducts, Category } from '@/lib/firebase/firestore';
-import { Product } from '@/lib/dummy-data';
+import { getCategories, getProducts, Category, Product } from '@/lib/firebase/firestore';
+
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -39,42 +39,38 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="bg-[var(--white)] min-h-screen pt-24 pb-32">
+    <div className="bg-[var(--white)] min-h-screen pt-16 md:pt-24 pb-20 md:pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <h1 className="text-5xl md:text-7xl font-black text-[var(--navy)] tracking-tighter uppercase mb-16 border-b-4 border-[var(--navy)] pb-8">
+          <h1 className="text-3xl md:text-7xl font-black text-[var(--navy)] tracking-tighter uppercase mb-10 md:mb-16 border-b-4 border-[var(--navy)] pb-6 md:pb-8">
             Categories
           </h1>
         </ScrollReveal>
 
         {categories.length === 0 ? (
           <ScrollReveal>
-            <div className="border-4 border-[var(--navy)] p-16 text-center">
-              <h2 className="text-3xl font-black text-[var(--navy)] uppercase mb-4">No Categories Found</h2>
+            <div className="border-4 border-[var(--navy)] p-8 md:p-16 text-center">
+              <h2 className="text-2xl md:text-3xl font-black text-[var(--navy)] uppercase mb-4">No Categories Found</h2>
               <p className="text-[var(--navy)] opacity-70 font-medium">Please add categories through the admin panel dashboard.</p>
             </div>
           </ScrollReveal>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {categories.map((category, index) => {
-              const count = getProductCount(category.slug);
               return (
                 <ScrollReveal key={category.slug} delay={index * 100}>
                   <Link 
                     href={`/categories/${category.slug}`}
-                    className="group block border-4 border-[var(--navy)] p-8 hover:bg-[var(--navy)] transition-colors bg-white"
+                    className="group block border-4 border-[var(--navy)] p-5 md:p-8 hover:bg-[var(--navy)] transition-colors bg-white"
                   >
                     <div className="flex justify-between items-end">
-                      <h2 className="text-3xl font-black text-[var(--navy)] group-hover:text-[var(--white)] uppercase tracking-tighter transition-colors break-words max-w-[80%]">
+                      <h2 className="text-xl md:text-3xl font-black text-[var(--navy)] group-hover:text-[var(--white)] uppercase tracking-tighter transition-colors break-words max-w-[80%]">
                         {category.name}
                       </h2>
                       <span className="text-[var(--navy)] group-hover:text-[var(--gold)] font-bold text-xl transition-colors">
                         &rarr;
                       </span>
                     </div>
-                    <p className="mt-4 text-[var(--navy)] group-hover:text-[var(--white)] opacity-80 uppercase tracking-widest text-xs font-bold transition-colors">
-                      {count} {count === 1 ? 'Product' : 'Products'}
-                    </p>
                   </Link>
                 </ScrollReveal>
               );

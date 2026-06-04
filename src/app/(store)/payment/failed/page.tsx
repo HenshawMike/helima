@@ -33,7 +33,7 @@ export default function PaymentFailedPage() {
               Try Again
             </Link>
             <a 
-              href="https://wa.me/1234567890?text=I%20need%20help%20with%20my%20payment%20on%20Helima" 
+              href="https://wa.me/+2348166707276?text=I%20need%20help%20with%20my%20payment%20on%20Helima" 
               target="_blank"
               rel="noopener noreferrer"
               className="bg-[var(--white)] text-[var(--navy)] px-8 py-4 font-black uppercase tracking-widest text-sm border-2 border-[var(--navy)] hover:text-[var(--gold)] hover:border-[var(--gold)] transition-colors"

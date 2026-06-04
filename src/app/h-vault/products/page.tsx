@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAdminProducts, updateProduct, deleteProduct } from '@/lib/firebase/firestore';
-import { Product } from '@/lib/dummy-data';
+
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -42,11 +42,11 @@ export default function AdminProductsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-end mb-12 border-b-4 border-[var(--navy)] pb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-8 sm:mb-12 border-b-4 border-[var(--navy)] pb-6">
         <h1 className="text-4xl font-black text-[var(--navy)] tracking-tighter uppercase">
           Inventory
         </h1>
-        <Link href="/h-vault/products/new" className="bg-[var(--navy)] text-[var(--white)] px-8 py-3 font-bold uppercase tracking-widest text-xs hover:bg-[var(--gold)] transition-colors">
+        <Link href="/h-vault/products/new" className="bg-[var(--navy)] text-[var(--white)] px-8 py-3 font-bold uppercase tracking-widest text-xs hover:bg-[var(--gold)] transition-colors text-center w-full sm:w-auto">
           + Add Product
         </Link>
       </div>
@@ -63,8 +63,8 @@ export default function AdminProductsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="border-4 border-[var(--navy)] p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:bg-[var(--navy)] transition-all">
-              <div className="flex items-center gap-6">
+            <div key={product.id} className="border-4 border-[var(--navy)] p-4 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:bg-[var(--navy)] transition-all">
+              <div className="flex items-center gap-4 sm:gap-6">
                 <div className="w-16 h-16 bg-[var(--white)] border-2 border-[var(--navy)] flex-shrink-0 overflow-hidden">
                   <img src={product.imageUrl} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
                 </div>
@@ -72,7 +72,7 @@ export default function AdminProductsPage() {
                   <div className="text-[10px] uppercase tracking-widest font-bold text-[var(--navy)] group-hover:text-[var(--white)] mb-1 opacity-50">
                     {product.category}
                   </div>
-                  <h3 className="text-xl font-black text-[var(--navy)] group-hover:text-[var(--white)] uppercase leading-none mb-2">
+                  <h3 className="text-lg sm:text-xl font-black text-[var(--navy)] group-hover:text-[var(--white)] uppercase leading-none mb-2">
                     {product.name}
                   </h3>
                   <div className="text-[var(--navy)] group-hover:text-[var(--white)] font-bold text-sm">
@@ -81,7 +81,7 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 w-full md:w-auto">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4 w-full md:w-auto">
                 <button 
                   onClick={() => handleToggleStatus(product.id, (product as any).isActive ?? true)}
                   className={`flex-1 md:flex-none px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 transition-colors ${

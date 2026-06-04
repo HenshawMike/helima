@@ -29,7 +29,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div>
-      <div className="mb-12 border-b-4 border-[var(--navy)] pb-6">
+      <div className="mb-8 sm:mb-12 border-b-4 border-[var(--navy)] pb-6">
         <h1 className="text-4xl font-black text-[var(--navy)] tracking-tighter uppercase">
           Orders
         </h1>
@@ -44,7 +44,7 @@ export default function AdminOrdersPage() {
       ) : (
         <div className="grid grid-cols-1 gap-8">
           {orders.map((order) => (
-            <div key={order.id} className="border-4 border-[var(--navy)] p-8 group">
+            <div key={order.id} className="border-4 border-[var(--navy)] p-4 sm:p-6 md:p-8 group">
               <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8 border-b-2 border-[var(--navy)] pb-6">
                 <div>
                   <div className="text-[10px] uppercase tracking-widest font-black text-[var(--navy)] opacity-50 mb-1">Order Identifier</div>
@@ -58,7 +58,7 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-left md:text-right">
                   <div className="text-[10px] uppercase tracking-widest font-black text-[var(--navy)] opacity-50 mb-1">Total Value</div>
                   <div className="text-3xl font-black text-[var(--navy)] tracking-tighter">${order.totalPrice?.toFixed(2) || '0.00'}</div>
                 </div>
@@ -77,7 +77,7 @@ export default function AdminOrdersPage() {
                   </ul>
                 </div>
 
-                <div className="pt-6 border-t border-[var(--navy)] border-dashed flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="pt-6 border-t border-[var(--navy)] border-dashed flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--navy)]">
                     Update Order State →
                   </div>

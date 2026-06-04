@@ -59,9 +59,9 @@ export default function AdminCategoriesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
         {/* Create Category Box */}
-        <div className="md:col-span-1 border-4 border-[var(--navy)] p-6 bg-white self-start">
+        <div className="md:col-span-1 border-4 border-[var(--navy)] p-4 sm:p-6 bg-white self-start w-full">
           <h2 className="text-xl font-black text-[var(--navy)] tracking-tighter uppercase mb-6 border-b-2 border-[var(--navy)] pb-2">
             Add Category
           </h2>
@@ -90,7 +90,7 @@ export default function AdminCategoriesPage() {
         </div>
 
         {/* Categories List Box */}
-        <div className="md:col-span-2 border-4 border-[var(--navy)] p-6 bg-white">
+        <div className="md:col-span-2 border-4 border-[var(--navy)] p-4 sm:p-6 bg-white">
           <h2 className="text-xl font-black text-[var(--navy)] tracking-tighter uppercase mb-6 border-b-2 border-[var(--navy)] pb-2">
             Active Categories
           </h2>

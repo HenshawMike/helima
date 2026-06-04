@@ -16,6 +16,49 @@ export default function NewProductPage() {
     description: '',
     isActive: true,
   });
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError('');
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      alert('Cloudinary is not configured. Please define NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET in your environment variables.');
+      setUploading(false);
+      return;
+    }
+
+    const formDataPayload = new FormData();
+    formDataPayload.append('file', file);
+    formDataPayload.append('upload_preset', uploadPreset);
+
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formDataPayload,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error?.message || 'Upload failed');
+      }
+
+      const data = await res.json();
+      setFormData(prev => ({ ...prev, imageUrl: data.secure_url }));
+    } catch (err: any) {
+      console.error('Cloudinary upload error:', err);
+      setUploadError(err.message || 'Error uploading image.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     getCategories().then(setCategories);
@@ -38,7 +81,7 @@ export default function NewProductPage() {
 
   return (
     <div className="max-w-2xl">
-      <div className="mb-12 border-b-4 border-[var(--navy)] pb-6">
+      <div className="mb-8 sm:mb-12 border-b-4 border-[var(--navy)] pb-6">
         <h1 className="text-4xl font-black text-[var(--navy)] tracking-tighter uppercase">
           New Acquisition
         </h1>
@@ -91,14 +134,29 @@ export default function NewProductPage() {
           </div>
           <div className="space-y-2">
             <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50">Image URL</label>
-            <input 
-              type="url" 
-              required
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full border-2 border-[var(--navy)] p-3 font-bold uppercase tracking-widest text-xs outline-none focus:bg-[var(--navy)] focus:text-white transition-all"
-              placeholder="https://images.unsplash.com/..."
-            />
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input 
+                type="url" 
+                required
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                className="w-full sm:flex-1 border-2 border-[var(--navy)] p-3 font-bold uppercase tracking-widest text-xs outline-none focus:bg-[var(--navy)] focus:text-white transition-all"
+                placeholder="https://images.unsplash.com/..."
+              />
+              <label className="w-full sm:w-auto bg-[var(--navy)] text-white px-4 py-3 font-bold uppercase tracking-widest text-[10px] border-2 border-[var(--navy)] hover:bg-white hover:text-[var(--navy)] transition-colors cursor-pointer flex items-center justify-center shrink-0">
+                {uploading ? 'Uploading...' : 'Upload Image'}
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={uploading}
+                />
+              </label>
+            </div>
+            {uploadError && (
+              <div className="text-[10px] text-red-600 font-bold uppercase tracking-wider">{uploadError}</div>
+            )}
           </div>
         </div>
 
@@ -113,18 +171,18 @@ export default function NewProductPage() {
           ></textarea>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <button 
             type="submit"
             disabled={loading}
-            className="bg-[var(--navy)] text-white px-12 py-4 font-black uppercase tracking-widest text-sm hover:bg-[var(--gold)] transition-colors disabled:opacity-50"
+            className="w-full sm:w-auto bg-[var(--navy)] text-white px-12 py-4 font-black uppercase tracking-widest text-sm hover:bg-[var(--gold)] transition-colors disabled:opacity-50 text-center"
           >
             {loading ? 'Committing...' : 'Save Product'}
           </button>
           <button 
             type="button"
             onClick={() => router.back()}
-            className="text-[var(--navy)] font-bold uppercase tracking-widest text-xs border-b-2 border-[var(--navy)] pb-1 hover:text-red-600 hover:border-red-600 transition-colors"
+            className="w-full sm:w-auto text-center py-2 text-[var(--navy)] font-bold uppercase tracking-widest text-xs border-b-2 border-[var(--navy)] sm:border-b-0 hover:text-red-600 transition-colors"
           >
             Cancel
           </button>
