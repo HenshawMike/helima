@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import ProductCard from '@/components/store/ProductCard';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { Product } from '@/lib/firebase/firestore';
 
 interface CategoryDetailsClientProps {
@@ -17,10 +18,13 @@ export default function CategoryDetailsClient({ initialProducts, slug }: Categor
     <div className="bg-[var(--white)] min-h-screen pt-10 pb-22">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="mb-2">
-            <Link href="/categories" className="text-[var(--navy)] font-bold uppercase tracking-widest text-sm hover:text-[var(--gold)] transition-colors flex items-center gap-2">
-              <span>&larr;</span> All Categories
-            </Link>
+          <div className="mb-6">
+            <Breadcrumbs 
+              items={[
+                { label: 'Categories', href: '/categories' },
+                { label: categoryName }
+              ]} 
+            />
           </div>
           
           <h1 className="text-5xl md:text-7xl font-black text-[var(--navy)] tracking-tighter uppercase mb-6 border-b-4 border-[var(--navy)] pb-8">

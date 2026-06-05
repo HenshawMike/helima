@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { Product } from '@/lib/firebase/firestore';
 
 interface ProductDetailsClientProps {
@@ -26,10 +27,14 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
     <div className="bg-[var(--white)] min-h-screen pt-8 md:pt-12 pb-20 md:pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="mb-12">
-            <Link href="/products" className="text-[var(--navy)] font-bold uppercase tracking-widest text-xs md:text-sm hover:text-[var(--gold)] transition-colors flex items-center gap-2">
-              <span>&larr;</span> Back to Catalog
-            </Link>
+          <div className="mb-8">
+            <Breadcrumbs 
+              items={[
+                { label: 'Products', href: '/products' },
+                { label: product.category, href: `/categories/${product.category.toLowerCase()}` },
+                { label: product.name }
+              ]} 
+            />
           </div>
         </ScrollReveal>
 
