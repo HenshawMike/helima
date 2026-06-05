@@ -54,7 +54,7 @@ export default function ProfilePage() {
         <ScrollReveal>
           <div className="border-b-2 border-[var(--navy)] pb-6 md:pb-8 mb-8 md:mb-12 flex justify-between items-end">
             <div>
-              <h1 className="text-3xl md:text-7xl font-black tracking-tighter uppercase leading-none">
+              <h1 className="text-2xl md:text-4xl font-black tracking-tighter uppercase leading-none">
                 Account
               </h1>
               <p className="text-[var(--navy)] opacity-60 uppercase tracking-widest text-xs md:text-sm font-bold mt-3 md:mt-4">

@@ -62,7 +62,7 @@ export async function POST(request: Request) {
           const currentData = orderSnap.data();
 
           // Prevent duplicate processing
-          if (currentData?.status === 'paid') {
+          if (currentData?.status === 'not_shipped' || currentData?.status === 'shipped' || currentData?.status === 'delivered') {
             return NextResponse.json({ received: true });
           }
 
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
           }
 
           await orderRef.update({
-            status: 'paid',
+            status: 'not_shipped',
             updatedAt: new Date().toISOString(),
             paymentDetails: {
               reference,
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
               paidAt: transactionData.paid_at,
             }
           });
-          console.log(`Order ${orderId} successfully updated to paid via webhook.`);
+          console.log(`Order ${orderId} successfully updated to not_shipped via webhook.`);
         }
       }
     }

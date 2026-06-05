@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getOrders, updateOrderStatus } from '@/lib/firebase/firestore';
+import { adminFetch } from '@/lib/admin-fetch';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -13,14 +13,24 @@ export default function AdminOrdersPage() {
 
   async function fetchOrders() {
     setLoading(true);
-    const data = await getOrders();
-    setOrders(data);
+    try {
+      const res = await adminFetch('/api/admin/orders');
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
     setLoading(false);
   }
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
-      await updateOrderStatus(id, newStatus);
+      await adminFetch(`/api/admin/orders/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus }),
+      });
       fetchOrders();
     } catch (error) {
       alert('Error updating order status');
@@ -82,12 +92,12 @@ export default function AdminOrdersPage() {
                     Update Order State →
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {['Pending', 'Shipped', 'Delivered', 'Cancelled'].map((status) => (
+                    {['Pending', 'not_shipped', 'Shipped', 'Delivered', 'Cancelled'].map((status) => (
                       <button
                         key={status}
-                        onClick={() => handleStatusChange(order.id, status)}
+                        onClick={() => handleStatusChange(order.id, status.toLowerCase())}
                         className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
-                          order.status === status 
+                          order.status?.toLowerCase() === status.toLowerCase() 
                           ? 'bg-[var(--navy)] text-white border-[var(--navy)]' 
                           : 'border-[var(--navy)] text-[var(--navy)] hover:bg-[var(--gold)] hover:border-[var(--gold)]'
                         }`}

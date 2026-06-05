@@ -27,7 +27,7 @@ function CheckoutItemImage({ imageUrl, name }: { imageUrl: string, name: string 
 }
 
 export default function CheckoutPage() {
-  const { items, totalPrice } = useCart();
+  const { items, totalPrice, pricesUpdated, dismissPriceNotice } = useCart();
   const { user, loading: authLoading, getIdToken, signInWithGoogle } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -112,6 +112,7 @@ export default function CheckoutPage() {
     setError('');
     try {
       const token = await getIdToken();
+      const savedOrderId = sessionStorage.getItem('helima_pending_order_id');
       const response = await fetch('/api/paystack/initialize', {
         method: 'POST',
         headers: {
@@ -121,6 +122,7 @@ export default function CheckoutPage() {
           email: formData.email,
           amount: totalPrice,
           authToken: token,
+          orderId: savedOrderId,
           items: items.map(item => ({
             id: item.id,
             name: item.name,
@@ -142,6 +144,9 @@ export default function CheckoutPage() {
       if (!response.ok || !data.authorization_url) {
         throw new Error(data.error || 'Payment initialization failed. Please try again.');
       }
+
+      // Store the active orderId in sessionStorage so if they return to this page, we reuse it
+      sessionStorage.setItem('helima_pending_order_id', data.orderId);
 
       // Redirect directly to Paystack's secure checkout page
       window.location.href = data.authorization_url;
@@ -198,7 +203,7 @@ export default function CheckoutPage() {
         <ScrollReveal>
           <div className="flex items-center gap-3 md:gap-4 mb-8 md:mb-12">
             <div className="w-8 md:w-12 h-1.5 md:h-2 bg-[var(--navy)]"></div>
-            <h1 className="text-3xl md:text-7xl font-black text-[var(--navy)] tracking-tighter uppercase">
+            <h1 className="text-2xl md:text-4xl font-black text-[var(--navy)] tracking-tighter uppercase">
               Checkout
             </h1>
           </div>
@@ -220,6 +225,21 @@ export default function CheckoutPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16">
             <div className="lg:col-span-2">
+              {/* Price-change notification */}
+              {pricesUpdated && (
+                <div className="mb-6 p-4 border-2 border-[var(--gold)] bg-[#fffdf5] flex items-center justify-between gap-4">
+                  <p className="text-[var(--navy)] font-bold text-xs md:text-sm uppercase tracking-wider">
+                    ⚠️ Some item prices have been updated. Review your order summary.
+                  </p>
+                  <button
+                    onClick={dismissPriceNotice}
+                    className="flex-shrink-0 text-[var(--navy)] hover:text-[var(--gold)] font-black text-xs uppercase tracking-widest underline"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              )}
+
               {error && (
                 <div className="mb-6 p-4 border-2 border-[var(--gold)] bg-white text-[var(--navy)] font-bold text-xs uppercase tracking-wider">
                   ⚠️ {error}

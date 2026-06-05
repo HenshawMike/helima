@@ -69,7 +69,7 @@ export async function GET(request: Request) {
       const orderData = orderSnap.data();
 
       // Prevent duplicate payment processing
-      if (orderData?.status === 'paid') {
+      if (orderData?.status === 'not_shipped' || orderData?.status === 'shipped' || orderData?.status === 'delivered') {
         return NextResponse.json({ status: 'success', message: 'Order already confirmed.' });
       }
 
@@ -80,19 +80,18 @@ export async function GET(request: Request) {
       const expectedAmount = Math.round((orderAmount || 0) * 100);
       const actualAmount = paystackData.data.amount;
 
-      // Use constant-time comparison via buffer comparison
-      const expectedBuf = Buffer.alloc(8);
-      const actualBuf = Buffer.alloc(8);
-      expectedBuf.writeDoubleBE(expectedAmount);
-      actualBuf.writeDoubleBE(actualAmount);
-
-      if (!crypto.timingSafeEqual(expectedBuf, actualBuf)) {
-        console.error(`Amount mismatch: Expected ${expectedAmount} kobo, got ${actualAmount} kobo for order ${orderId}.`);
-        return NextResponse.json({ error: 'Payment verification failed.' }, { status: 400 });
+      // Allow actualAmount to be greater than or equal to expectedAmount
+      // because Paystack adds transaction fees if the customer bears the charge.
+      if (actualAmount < expectedAmount) {
+        console.error(`Amount mismatch: Expected at least ${expectedAmount} kobo, got ${actualAmount} kobo for order ${orderId}.`);
+        return NextResponse.json({ 
+          error: 'Payment verification failed.', 
+          debug: `Amount mismatch: Expected at least ${expectedAmount}, got ${actualAmount}`
+        }, { status: 400 });
       }
 
       await orderRef.update({
-        status: 'paid',
+        status: 'not_shipped',
         updatedAt: new Date().toISOString(),
         paymentDetails: {
           reference,

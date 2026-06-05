@@ -1,7 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getCategories, createCategory, deleteCategory, Category } from '@/lib/firebase/firestore';
+import { adminFetch } from '@/lib/admin-fetch';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -11,8 +17,15 @@ export default function AdminCategoriesPage() {
 
   async function loadCategories() {
     setLoading(true);
-    const data = await getCategories();
-    setCategories(data);
+    try {
+      const res = await adminFetch('/api/admin/categories');
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
     setLoading(false);
   }
 
@@ -25,7 +38,10 @@ export default function AdminCategoriesPage() {
     if (!newCategoryName.trim()) return;
     setSubmitting(true);
     try {
-      await createCategory(newCategoryName.trim());
+      await adminFetch('/api/admin/categories', {
+        method: 'POST',
+        body: JSON.stringify({ name: newCategoryName.trim() }),
+      });
       setNewCategoryName('');
       await loadCategories();
     } catch (error) {
@@ -38,7 +54,9 @@ export default function AdminCategoriesPage() {
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete the category "${name}"?`)) return;
     try {
-      await deleteCategory(id);
+      await adminFetch(`/api/admin/categories/${id}`, {
+        method: 'DELETE',
+      });
       await loadCategories();
     } catch (error) {
       alert('Error deleting category');

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
     // ── Parse and validate body ────────────────────────────────
     const body = await request.json();
-    const { email, metadata, items, authToken } = body;
+    const { email, metadata, items, authToken, orderId: clientOrderId } = body;
 
     if (!email || !EMAIL_RE.test(email)) {
       return NextResponse.json({ error: 'A valid email address is required.' }, { status: 400 });
@@ -140,9 +140,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Payment provider is not configured.' }, { status: 500 });
     }
 
-    // 1. Create a secure Firestore order document with auto-ID
-    const orderRef = adminDb.collection('orders').doc();
-    const orderId = orderRef.id;
+    // 1. Get or create a secure Firestore order document
+    let orderRef;
+    const incomingOrderId = typeof clientOrderId === 'string' && clientOrderId.trim().length > 0 ? clientOrderId.trim() : null;
+
+    if (incomingOrderId) {
+      orderRef = adminDb.collection('orders').doc(incomingOrderId);
+      const existingDoc = await orderRef.get();
+      if (existingDoc.exists) {
+        const existingData = existingDoc.data();
+        const belongsToSameUser = existingData?.customerEmail === email || (verifiedUserId && existingData?.userId === verifiedUserId);
+        // Only reuse if the status is still pending AND it belongs to the same customer
+        if (existingData?.status !== 'pending' || !belongsToSameUser) {
+          orderRef = adminDb.collection('orders').doc();
+        }
+      }
+    } else {
+      orderRef = adminDb.collection('orders').doc();
+    }
+    const finalOrderId = orderRef.id;
+    // Keep local variable named orderId for downstream Paystack & document write references
+    const orderId = finalOrderId;
 
     // Convert amount to kobo (Paystack expects amounts in lowest currency unit)
     const paystackAmount = Math.round(serverTotal * 100);

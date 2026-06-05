@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createProduct, getCategories, Category } from '@/lib/firebase/firestore';
+import { adminFetch } from '@/lib/admin-fetch';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -61,18 +67,29 @@ export default function NewProductPage() {
   };
 
   useEffect(() => {
-    getCategories().then(setCategories);
+    adminFetch('/api/admin/categories')
+      .then(res => res.json())
+      .then(setCategories)
+      .catch(err => console.error('Error loading categories:', err));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await createProduct({
-        ...formData,
-        price: parseFloat(formData.price),
+      const res = await adminFetch('/api/admin/products', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...formData,
+          price: parseFloat(formData.price),
+        }),
       });
-      router.push('/h-vault/products');
+      if (res.ok) {
+        router.push('/h-vault/products');
+      } else {
+        alert('Error creating product');
+        setLoading(false);
+      }
     } catch (error) {
       alert('Error creating product');
       setLoading(false);

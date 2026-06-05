@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { getProductById, updateProduct, getCategories, Category } from '@/lib/firebase/firestore';
+import { adminFetch } from '@/lib/admin-fetch';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -63,22 +69,30 @@ export default function EditProductPage() {
   };
 
   useEffect(() => {
-    getCategories().then(setCategories);
+    adminFetch('/api/admin/categories')
+      .then(res => res.json())
+      .then(setCategories)
+      .catch(err => console.error('Error loading categories:', err));
   }, []);
 
   useEffect(() => {
     async function loadProduct() {
       if (typeof id !== 'string') return;
-      const product = await getProductById(id);
-      if (product) {
-        setFormData({
-          name: product.name,
-          price: product.price.toString(),
-          category: product.category,
-          imageUrl: product.imageUrl,
-          description: product.description,
-          isActive: (product as any).isActive !== false,
-        });
+      try {
+        const res = await adminFetch(`/api/admin/products/${id}`);
+        if (res.ok) {
+          const product = await res.json();
+          setFormData({
+            name: product.name,
+            price: product.price.toString(),
+            category: product.category,
+            imageUrl: product.imageUrl,
+            description: product.description,
+            isActive: (product as any).isActive !== false,
+          });
+        }
+      } catch (error) {
+        console.error('Error loading product:', error);
       }
       setLoading(false);
     }
@@ -90,11 +104,19 @@ export default function EditProductPage() {
     setSaving(true);
     try {
       if (typeof id !== 'string') return;
-      await updateProduct(id, {
-        ...formData,
-        price: parseFloat(formData.price),
+      const res = await adminFetch(`/api/admin/products/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          ...formData,
+          price: parseFloat(formData.price),
+        }),
       });
-      router.push('/h-vault/products');
+      if (res.ok) {
+        router.push('/h-vault/products');
+      } else {
+        alert('Error updating product');
+        setSaving(false);
+      }
     } catch (error) {
       alert('Error updating product');
       setSaving(false);

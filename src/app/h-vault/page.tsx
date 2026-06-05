@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getOrders, getAdminProducts } from '@/lib/firebase/firestore';
+import { adminFetch } from '@/lib/admin-fetch';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function AdminDashboard() {
@@ -16,12 +16,27 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function loadStats() {
       try {
-        const [orders, products] = await Promise.all([getOrders(), getAdminProducts()]);
+        const [ordersRes, productsRes] = await Promise.all([
+          adminFetch('/api/admin/orders'),
+          adminFetch('/api/admin/products'),
+        ]);
+
+        if (!ordersRes.ok || !productsRes.ok) {
+          console.error('Failed to load dashboard data');
+          setLoading(false);
+          return;
+        }
+
+        const orders = await ordersRes.json();
+        const products = await productsRes.json();
         
         // Calculate dynamic stats
-        const paidOrders = orders.filter((o: any) => o.status === 'paid');
+        const paidOrders = orders.filter((o: any) => {
+          const status = o.status?.toLowerCase();
+          return status === 'not_shipped' || status === 'shipped' || status === 'delivered';
+        });
         const revenue = paidOrders.reduce((sum: number, o: any) => sum + (o.totalPrice || 0), 0);
-        const pending = orders.filter((o: any) => o.status === 'pending').length;
+        const pending = orders.filter((o: any) => o.status?.toLowerCase() === 'pending').length;
         const activeProds = products.filter((p: any) => p.isActive !== false).length;
 
         setStats({
@@ -99,9 +114,11 @@ export default function AdminDashboard() {
                 <div className="w-full md:w-auto flex justify-between md:justify-end items-center gap-4 mt-2 md:mt-0">
                   <span className="font-black text-[var(--navy)] text-md">₦{order.totalPrice?.toFixed(2)}</span>
                   <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border-2 ${
-                    order.status === 'paid'
-                      ? 'border-green-600 text-green-600 bg-green-50'
-                      : 'border-[var(--gold)] text-[var(--gold)] bg-yellow-50'
+                    order.status?.toLowerCase() === 'pending'
+                      ? 'border-[var(--gold)] text-[var(--gold)] bg-yellow-50'
+                      : order.status?.toLowerCase() === 'cancelled'
+                      ? 'border-red-600 text-red-600 bg-red-50'
+                      : 'border-green-600 text-green-600 bg-green-50' // not_shipped, shipped, delivered
                   }`}>
                     {order.status}
                   </span>

@@ -15,7 +15,7 @@ function SuccessContent() {
   const [status, setStatus] = useState<'verifying' | 'success' | 'failed' | 'direct'>('verifying');
   const [errorMsg, setErrorMsg] = useState('');
   const [verified, setVerified] = useState(false);
-  const hasCalled = useRef(false);
+  const attempts = useRef(0);
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '+2348166707276';
   const message = encodeURIComponent(`Hello Helima! I just completed my order online (Paystack Ref: ${reference || 'N/A'}). I would like to coordinate shipping.`);
@@ -28,17 +28,17 @@ function SuccessContent() {
       return;
     }
 
-    if (verified || hasCalled.current) {
+    if (verified || attempts.current >= 3) {
       return;
     }
 
     // Set guards immediately before making the async network call
-    hasCalled.current = true;
+    attempts.current += 1;
     setVerified(true);
 
     async function verifyPayment() {
       try {
-        console.log('Initializing Paystack transaction verification for reference:', reference);
+        console.log(`Initializing Paystack transaction verification for reference: ${reference} (Attempt ${attempts.current})`);
         const response = await fetch(`/api/paystack/verify?reference=${reference}`);
         const data = await response.json();
         console.log('VERIFY RESPONSE:', data);
@@ -46,20 +46,25 @@ function SuccessContent() {
         if (response.ok && data.status === 'success') {
           // Clear local shopping cart immediately on successful verification!
           clearCart();
+          sessionStorage.removeItem('helima_pending_order_id');
           setStatus('success');
         } else {
-          setErrorMsg(data.error || 'Payment verification failed.');
-          setStatus('failed');
-          // Allow retrying if the network or verification failed temporarily
-          hasCalled.current = false;
-          setVerified(false);
+          if (attempts.current >= 3) {
+            setErrorMsg(data.error || 'Payment verification failed.');
+            setStatus('failed');
+          } else {
+            // Allow retrying if the network or verification failed temporarily
+            setTimeout(() => setVerified(false), 2000);
+          }
         }
       } catch (err) {
         console.error('Verification error:', err);
-        setErrorMsg('Network error. Unable to verify payment.');
-        setStatus('failed');
-        hasCalled.current = false;
-        setVerified(false);
+        if (attempts.current >= 3) {
+          setErrorMsg('Network error. Unable to verify payment.');
+          setStatus('failed');
+        } else {
+          setTimeout(() => setVerified(false), 2000);
+        }
       }
     }
 
@@ -124,7 +129,7 @@ function SuccessContent() {
       </ScrollReveal>
 
       <ScrollReveal delay={100}>
-        <h1 className="text-5xl md:text-7xl font-black text-[var(--navy)] tracking-tighter uppercase mb-6">
+        <h1 className="text-2xl md:text-4xl font-black text-[var(--navy)] tracking-tighter uppercase mb-6">
           Order Confirmed
         </h1>
         <p className="text-[var(--navy)] text-lg font-medium mb-12">

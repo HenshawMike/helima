@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getAdminProducts, updateProduct, deleteProduct } from '@/lib/firebase/firestore';
+import { adminFetch } from '@/lib/admin-fetch';
 
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  imageUrl: string;
+  category: string;
+  isActive?: boolean;
+}
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -15,14 +24,24 @@ export default function AdminProductsPage() {
 
   async function fetchProducts() {
     setLoading(true);
-    const data = await getAdminProducts();
-    setProducts(data);
+    try {
+      const res = await adminFetch('/api/admin/products');
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
     setLoading(false);
   }
 
   const handleToggleStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await updateProduct(id, { isActive: !currentStatus } as any);
+      await adminFetch(`/api/admin/products/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ isActive: !currentStatus }),
+      });
       fetchProducts();
     } catch (error) {
       alert('Error updating status');
@@ -32,7 +51,9 @@ export default function AdminProductsPage() {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await deleteProduct(id);
+        await adminFetch(`/api/admin/products/${id}`, {
+          method: 'DELETE',
+        });
         fetchProducts();
       } catch (error) {
         alert('Error deleting product');
