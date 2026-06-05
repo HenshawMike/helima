@@ -5,8 +5,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://helima.com';
 
   // Fetch dynamic categories and products from Firebase Firestore
-  let products = [];
-  let categories = [];
+  let products: any[] = [];
+  let categories: any[] = [];
   try {
     const [prods, cats] = await Promise.all([getProductsServer(), getCategoriesServer()]);
     products = prods || [];

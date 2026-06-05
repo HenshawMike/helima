@@ -86,12 +86,14 @@ class MemoryStore implements RateLimitStore {
 //   const redis = new Redis(process.env.REDIS_URL);
 //   const limiter = createRateLimiter({ interval: 60_000, maxRequests: 10 }, redis);
 
+interface RedisMulti {
+  incr(key: string): RedisMulti;
+  expire(key: string, seconds: number): RedisMulti;
+  exec(): Promise<Array<[Error | null, number]>>;
+}
+
 interface RedisClient {
-  multi(): {
-    incr(key: string): unknown;
-    expire(key: string, seconds: number): unknown;
-    exec(): Promise<Array<[Error | null, number]>>;
-  };
+  multi(): RedisMulti;
 }
 
 class RedisStore implements RateLimitStore {
