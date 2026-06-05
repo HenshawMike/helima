@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { getProductsServer } from '@/lib/firebase/firestore-admin'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://helima.shop';
+  const baseUrl = 'https://www.helima.shop';
 
   // Fetch dynamic products from Firebase Firestore
   let products: any[] = [];
