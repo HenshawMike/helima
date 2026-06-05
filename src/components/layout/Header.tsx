@@ -32,7 +32,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-[var(--white)] border-b-2 border-[var(--navy)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 md:h-20">
+        <div className="flex justify-between items-center h-12 md:h-14">
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="font-bold text-lg md:text-2xl tracking-tighter text-[var(--navy)] flex items-center gap-2 md:gap-3 uppercase">
               <img src="/helima.png" alt="Helima" className="w-9 h-9 md:w-14 md:h-14 object-contain" />

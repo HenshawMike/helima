@@ -15,20 +15,29 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
 
   return (
     <div className="flex flex-col min-h-screen bg-[var(--white)] selection:bg-[var(--navy)] selection:text-[var(--white)]">
-      {/* Hero Section */}
-      <section className="bg-[var(--navy)] text-[var(--white)] pt-12 pb-12 md:pt-20 md:pb-20 border-b-2 border-[var(--navy)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section with Background Image */}
+      <section className="relative bg-[var(--navy)] text-[var(--white)] pt-16 pb-16 md:pt-24 md:pb-24 border-b-2 border-[var(--navy)] overflow-hidden">
+        {/* Background Image with Navy Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/hero_background.png')" }}
+        />
+        {/* Navy Overlay - low opacity */}
+        <div className="absolute inset-0 bg-[var(--navy)] opacity-80" />
+        
+        {/* Content - relative to stay above overlay */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-center text-center gap-8 md:gap-12">
             <div className="max-w-2xl flex flex-col items-center">
               <ScrollReveal delay={300}>
-                <h1 className="text-2xl md:text-4xl font-black tracking-tighter leading-none mb-5 md:mb-8 uppercase">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none mb-1 md:mb-3 uppercase">
                   Curated <br />
                   Imports
                 </h1>
               </ScrollReveal>
               
               <ScrollReveal delay={500}>
-                <p className="text-base md:text-lg max-w-md leading-relaxed font-medium opacity-90 mb-8 md:mb-12">
+                <p className="text-md md:text-lg lg:text-xl max-w-md leading-tight font-medium opacity-90 mb-8 md:mb-12">
                   Exceptional goods sourced globally. Delivered directly to you with uncompromising standards.
                 </p>
               </ScrollReveal>
@@ -37,7 +46,7 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
                 <div className="flex justify-center gap-4 md:gap-6">
                   <Link 
                     href="/products" 
-                    className="bg-[var(--white)] text-[var(--navy)] px-6 py-3 md:px-8 md:py-4 font-black uppercase tracking-widest text-xs md:text-sm transition-transform hover:translate-x-1"
+                    className="bg-[var(--white)] text-[var(--navy)] px-8 py-4 md:px-10 md:py-5 font-black uppercase tracking-widest text-sm md:text-base transition-transform hover:translate-x-1"
                   >
                     View Catalog
                   </Link>
