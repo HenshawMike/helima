@@ -18,8 +18,8 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
       {/* Hero Section */}
       <section className="bg-[var(--navy)] text-[var(--white)] pt-12 pb-12 md:pt-20 md:pb-20 border-b-2 border-[var(--navy)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12">
-            <div className="max-w-2xl">
+          <div className="flex flex-col items-center justify-center text-center gap-8 md:gap-12">
+            <div className="max-w-2xl flex flex-col items-center">
               <ScrollReveal delay={300}>
                 <h1 className="text-2xl md:text-4xl font-black tracking-tighter leading-none mb-5 md:mb-8 uppercase">
                   Curated <br />
@@ -34,7 +34,7 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
               </ScrollReveal>
               
               <ScrollReveal delay={700}>
-                <div className="flex flex-wrap gap-4 md:gap-6">
+                <div className="flex justify-center gap-4 md:gap-6">
                   <Link 
                     href="/products" 
                     className="bg-[var(--white)] text-[var(--navy)] px-6 py-3 md:px-8 md:py-4 font-black uppercase tracking-widest text-xs md:text-sm transition-transform hover:translate-x-1"
@@ -44,16 +44,6 @@ export default function HomeClient({ initialProducts }: HomeClientProps) {
                 </div>
               </ScrollReveal>
             </div>
-            
-            <ScrollReveal delay={600} direction="right" className="hidden lg:block w-[400px]">
-               <div className="w-full aspect-square border-2 border-[var(--white)] relative">
-                  <div className="absolute top-4 left-4 w-full h-full border-2 border-[var(--white)] opacity-50"></div>
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center grayscale"
-                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=1000&auto=format&fit=crop')" }}
-                  ></div>
-               </div>
-            </ScrollReveal>
           </div>
         </div>
       </section>
