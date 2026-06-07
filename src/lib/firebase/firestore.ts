@@ -15,6 +15,8 @@ import {
 import { db } from './config';
 
 
+
+
 export interface Product {
   id: string;
   name: string;
@@ -22,6 +24,8 @@ export interface Product {
   description: string;
   imageUrl: string;
   category: string;
+  subcategory?: string;
+  availability?: 'available' | 'preorder';
   isActive?: boolean;
 }
 
@@ -29,6 +33,7 @@ export interface Category {
   id: string;
   name: string;
   slug: string;
+  subcategories?: string[];
 }
 
 // ==========================================

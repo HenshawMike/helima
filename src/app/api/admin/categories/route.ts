@@ -40,11 +40,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { name } = await req.json();
+    const { name, subcategories } = await req.json();
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
-    const id = await createCategoryServer(name);
+    const id = await createCategoryServer(name, subcategories || []);
     return NextResponse.json({ id }, { status: 201 });
   } catch (error) {
     console.error('Error creating category:', error);

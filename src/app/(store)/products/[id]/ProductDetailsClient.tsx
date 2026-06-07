@@ -63,6 +63,11 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-8 h-1 bg-[var(--gold)]"></div>
                 <span className="font-bold text-sm tracking-widest uppercase text-[var(--navy)]">{product.category}</span>
+                {product.availability === 'preorder' && (
+                  <span className="bg-[var(--gold)] text-[var(--navy)] font-black text-[9px] uppercase tracking-widest px-2.5 py-1 border border-[var(--navy)] shadow-[2px_2px_0_0_var(--navy)] ml-2">
+                    Pre-Order
+                  </span>
+                )}
               </div>
               
               <h1 className="text-2xl md:text-4xl font-black tracking-tighter uppercase text-[var(--navy)] leading-none mb-5 md:mb-8">
@@ -113,7 +118,7 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
                 onClick={handleAddToCart}
                 className="w-full bg-[var(--navy)] text-[var(--white)] py-4 md:py-6 font-black uppercase tracking-widest text-base md:text-lg border-2 border-[var(--navy)] hover:bg-[var(--white)] hover:text-[var(--navy)] transition-all relative overflow-hidden"
               >
-                {isAdded ? 'Added to Cart ✓' : 'Add to Cart'}
+                {isAdded ? 'Added to Cart ✓' : (product.availability === 'preorder' ? 'Pre-Order Now' : 'Add to Cart')}
               </button>
             </ScrollReveal>
           </div>

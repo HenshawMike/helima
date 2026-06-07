@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getProductsByCategoryServer } from '@/lib/firebase/firestore-admin';
+import { getProductsByCategoryServer, getCategoryBySlugServer } from '@/lib/firebase/firestore-admin';
 import CategoryDetailsClient from './CategoryDetailsClient';
 
 interface Props {
@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
 
   return {
-    title: `Shop ${categoryName} — Premium Curated Imports | Helima`,
+    title: `Shop ${categoryName} — Premium Curated Imports `,
     description: `Explore our exclusive selection of premium ${categoryName} garments, designer collections, and luxury lifestyle accessories. Sourced globally with uncompromising standards.`,
     keywords: [
       slug,
@@ -28,7 +28,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-  const products = await getProductsByCategoryServer(slug);
+  const [products, category] = await Promise.all([
+    getProductsByCategoryServer(slug),
+    getCategoryBySlugServer(slug),
+  ]);
 
-  return <CategoryDetailsClient initialProducts={products} slug={slug} />;
+  const subcategories = category?.subcategories || [];
+
+  return (
+    <CategoryDetailsClient
+      initialProducts={products}
+      slug={slug}
+      subcategories={subcategories}
+    />
+  );
 }

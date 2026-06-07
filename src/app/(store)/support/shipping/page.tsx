@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export const metadata: Metadata = {
-  title: "Shipping & Delivery Policy | Helima",
+  title: "Shipping & Delivery Policy ",
   description: "Read about our domestic shipping timeframes, global logistics partner imports, dynamic custom duties calculation, and package tracking updates at Helima.",
   keywords: [
     "shipping policy",

@@ -8,6 +8,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+  subcategories?: string[];
 }
 
 export default function NewProductPage() {
@@ -18,8 +19,10 @@ export default function NewProductPage() {
     name: '',
     price: '',
     category: '',
+    subcategory: '',
     imageUrl: '',
     description: '',
+    availability: 'available',
     isActive: true,
   });
   const [uploading, setUploading] = useState(false);
@@ -135,7 +138,7 @@ export default function NewProductPage() {
             <select 
               required
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: '' })}
               className="w-full border-2 border-[var(--navy)] p-3 font-bold uppercase tracking-widest text-xs outline-none focus:bg-[var(--navy)] focus:text-white transition-all appearance-none"
             >
               <option value="">Select Category</option>
@@ -145,6 +148,27 @@ export default function NewProductPage() {
                 </option>
               ))}
             </select>
+            {/* Subcategory selector - only shown when category has subcategories */}
+            {(() => {
+              const selectedCategory = categories.find(c => c.slug === formData.category);
+              const subs = selectedCategory?.subcategories || [];
+              if (subs.length === 0) return null;
+              return (
+                <div className="mt-2">
+                  <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50 mb-1">Subcategory</label>
+                  <select
+                    value={formData.subcategory}
+                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    className="w-full border-2 border-[var(--navy)] p-3 font-bold uppercase tracking-widest text-xs outline-none focus:bg-[var(--navy)] focus:text-white transition-all appearance-none"
+                  >
+                    <option value="">None (optional)</option>
+                    {subs.map((sub) => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+                </div>
+              );
+            })()}
             <div className="text-[9px] uppercase tracking-wider text-[var(--navy)] opacity-40 font-bold">
               * Manage categories in the sidebar Vault
             </div>
@@ -174,6 +198,42 @@ export default function NewProductPage() {
             {uploadError && (
               <div className="text-[10px] text-red-600 font-bold uppercase tracking-wider">{uploadError}</div>
             )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50">Availability Status</label>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <label className={`flex items-center gap-2 cursor-pointer border-2 p-3 flex-1 font-bold uppercase tracking-widest text-xs transition-all ${
+              formData.availability === 'available' 
+                ? 'border-[var(--navy)] bg-[var(--navy)] text-white' 
+                : 'border-[var(--navy)] bg-white text-[var(--navy)]'
+            }`}>
+              <input 
+                type="radio" 
+                name="availability" 
+                value="available"
+                checked={formData.availability === 'available'}
+                onChange={() => setFormData({ ...formData, availability: 'available' })}
+                className="sr-only"
+              />
+              Available (In Stock)
+            </label>
+            <label className={`flex items-center gap-2 cursor-pointer border-2 p-3 flex-1 font-bold uppercase tracking-widest text-xs transition-all ${
+              formData.availability === 'preorder' 
+                ? 'border-[var(--navy)] bg-[var(--navy)] text-white' 
+                : 'border-[var(--navy)] bg-white text-[var(--navy)]'
+            }`}>
+              <input 
+                type="radio" 
+                name="availability" 
+                value="preorder"
+                checked={formData.availability === 'preorder'}
+                onChange={() => setFormData({ ...formData, availability: 'preorder' })}
+                className="sr-only"
+              />
+              Pre-Order
+            </label>
           </div>
         </div>
 

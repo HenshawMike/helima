@@ -7,13 +7,19 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+  subcategories?: string[];
 }
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [pendingSubcategories, setPendingSubcategories] = useState<string[]>([]);
+  const [pendingSubInput, setPendingSubInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null);
+  const [newSubcategoryName, setNewSubcategoryName] = useState('');
+  const [savingSubcategories, setSavingSubcategories] = useState<string | null>(null);
 
   async function loadCategories() {
     setLoading(true);
@@ -33,6 +39,18 @@ export default function AdminCategoriesPage() {
     loadCategories();
   }, []);
 
+  const handleAddPendingSub = () => {
+    const trimmed = pendingSubInput.trim();
+    if (!trimmed) return;
+    if (pendingSubcategories.some(s => s.toLowerCase() === trimmed.toLowerCase())) return;
+    setPendingSubcategories(prev => [...prev, trimmed]);
+    setPendingSubInput('');
+  };
+
+  const handleRemovePendingSub = (sub: string) => {
+    setPendingSubcategories(prev => prev.filter(s => s !== sub));
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategoryName.trim()) return;
@@ -40,9 +58,14 @@ export default function AdminCategoriesPage() {
     try {
       await adminFetch('/api/admin/categories', {
         method: 'POST',
-        body: JSON.stringify({ name: newCategoryName.trim() }),
+        body: JSON.stringify({ 
+          name: newCategoryName.trim(),
+          subcategories: pendingSubcategories,
+        }),
       });
       setNewCategoryName('');
+      setPendingSubcategories([]);
+      setPendingSubInput('');
       await loadCategories();
     } catch (error) {
       alert('Error creating category');
@@ -60,6 +83,55 @@ export default function AdminCategoriesPage() {
       await loadCategories();
     } catch (error) {
       alert('Error deleting category');
+    }
+  };
+
+  const handleAddSubcategory = async (categoryId: string) => {
+    if (!newSubcategoryName.trim()) return;
+    const category = categories.find(c => c.id === categoryId);
+    if (!category) return;
+
+    const existing = category.subcategories || [];
+    const trimmed = newSubcategoryName.trim();
+
+    // Prevent duplicates (case-insensitive)
+    if (existing.some(s => s.toLowerCase() === trimmed.toLowerCase())) {
+      alert('This subcategory already exists.');
+      return;
+    }
+
+    const updated = [...existing, trimmed];
+    setSavingSubcategories(categoryId);
+    try {
+      await adminFetch(`/api/admin/categories/${categoryId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ subcategories: updated }),
+      });
+      setNewSubcategoryName('');
+      await loadCategories();
+    } catch (error) {
+      alert('Error adding subcategory');
+    } finally {
+      setSavingSubcategories(null);
+    }
+  };
+
+  const handleRemoveSubcategory = async (categoryId: string, subcategory: string) => {
+    const category = categories.find(c => c.id === categoryId);
+    if (!category) return;
+
+    const updated = (category.subcategories || []).filter(s => s !== subcategory);
+    setSavingSubcategories(categoryId);
+    try {
+      await adminFetch(`/api/admin/categories/${categoryId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ subcategories: updated }),
+      });
+      await loadCategories();
+    } catch (error) {
+      alert('Error removing subcategory');
+    } finally {
+      setSavingSubcategories(null);
     }
   };
 
@@ -97,6 +169,64 @@ export default function AdminCategoriesPage() {
                 className="w-full border-2 border-[var(--navy)] p-3 font-bold uppercase tracking-widest text-xs outline-none focus:bg-[var(--navy)] focus:text-white transition-all rounded-none"
               />
             </div>
+
+            {/* Subcategories inline builder */}
+            <div className="space-y-2">
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--navy)] font-bold opacity-50">
+                Subcategories <span className="opacity-60">(optional)</span>
+              </label>
+
+              {/* Pending subcategory tags */}
+              {pendingSubcategories.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {pendingSubcategories.map((sub) => (
+                    <span 
+                      key={sub}
+                      className="inline-flex items-center gap-1 bg-[var(--navy)] text-white px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest"
+                    >
+                      {sub}
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePendingSub(sub)}
+                        className="ml-0.5 hover:text-red-400 transition-colors text-xs leading-none"
+                        title={`Remove ${sub}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Subcategory input row */}
+              <div className="flex gap-1.5">
+                <input
+                  type="text"
+                  value={pendingSubInput}
+                  onChange={(e) => setPendingSubInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddPendingSub();
+                    }
+                  }}
+                  placeholder="e.g. Hoodies"
+                  className="flex-1 border-2 border-[var(--navy)] p-2 font-bold uppercase tracking-widest text-[10px] outline-none focus:bg-[var(--navy)] focus:text-white transition-all rounded-none"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddPendingSub}
+                  disabled={!pendingSubInput.trim()}
+                  className="bg-[var(--gold)] text-[var(--navy)] w-9 flex items-center justify-center font-black text-sm border-2 border-[var(--gold)] hover:bg-[var(--navy)] hover:text-white hover:border-[var(--navy)] transition-colors disabled:opacity-30"
+                >
+                  +
+                </button>
+              </div>
+              <p className="text-[8px] uppercase tracking-wider text-[var(--navy)] opacity-35 font-bold">
+                Press Enter or + to add. Visible as filters on storefront.
+              </p>
+            </div>
+
             <button 
               type="submit"
               disabled={submitting}
@@ -123,24 +253,105 @@ export default function AdminCategoriesPage() {
             </div>
           ) : (
             <div className="divide-y-2 divide-[var(--navy)]">
-              {categories.map((category) => (
-                <div key={category.id} className="py-4 flex justify-between items-center group">
-                  <div>
-                    <h3 className="text-lg font-black text-[var(--navy)] uppercase tracking-tight">
-                      {category.name}
-                    </h3>
-                    <p className="text-[10px] uppercase tracking-widest font-mono text-[var(--navy)] opacity-40">
-                      slug: {category.slug}
-                    </p>
+              {categories.map((category) => {
+                const isExpanded = expandedCategoryId === category.id;
+                const subcategories = category.subcategories || [];
+
+                return (
+                  <div key={category.id} className="py-4">
+                    <div className="flex justify-between items-center group">
+                      <div className="flex-1 cursor-pointer" onClick={() => setExpandedCategoryId(isExpanded ? null : category.id)}>
+                        <h3 className="text-lg font-black text-[var(--navy)] uppercase tracking-tight">
+                          {category.name}
+                        </h3>
+                        <div className="flex items-center gap-3">
+                          <p className="text-[10px] uppercase tracking-widest font-mono text-[var(--navy)] opacity-40">
+                            slug: {category.slug}
+                          </p>
+                          {subcategories.length > 0 && (
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--gold)]">
+                              {subcategories.length} sub{subcategories.length === 1 ? '' : 's'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setExpandedCategoryId(isExpanded ? null : category.id)}
+                          className="border-2 border-[var(--navy)] text-[var(--navy)] px-3 py-2 font-bold uppercase tracking-widest text-[10px] hover:bg-[var(--navy)] hover:text-white transition-all rounded-none"
+                        >
+                          {isExpanded ? 'Close' : 'Subs'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(category.id, category.name)}
+                          className="border-2 border-red-600 text-red-600 px-4 py-2 font-bold uppercase tracking-widest text-[10px] hover:bg-red-600 hover:text-white transition-all rounded-none"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Subcategories Panel */}
+                    {isExpanded && (
+                      <div className="mt-4 border-2 border-[var(--navy)] border-dashed p-4 bg-gray-50">
+                        <h4 className="text-[10px] uppercase tracking-widest font-bold text-[var(--navy)] opacity-60 mb-3">
+                          Subcategories — visible as filters on storefront
+                        </h4>
+
+                        {/* Existing subcategories */}
+                        {subcategories.length > 0 ? (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {subcategories.map((sub) => (
+                              <span 
+                                key={sub} 
+                                className="inline-flex items-center gap-1.5 bg-[var(--navy)] text-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest"
+                              >
+                                {sub}
+                                <button
+                                  onClick={() => handleRemoveSubcategory(category.id, sub)}
+                                  disabled={savingSubcategories === category.id}
+                                  className="ml-1 hover:text-red-400 transition-colors text-xs leading-none"
+                                  title={`Remove ${sub}`}
+                                >
+                                  ×
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-[10px] uppercase tracking-widest text-[var(--navy)] opacity-40 mb-4">
+                            No subcategories yet. Add one below.
+                          </p>
+                        )}
+
+                        {/* Add subcategory input */}
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={newSubcategoryName}
+                            onChange={(e) => setNewSubcategoryName(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleAddSubcategory(category.id);
+                              }
+                            }}
+                            placeholder="e.g. Hoodies"
+                            className="flex-1 border-2 border-[var(--navy)] p-2 font-bold uppercase tracking-widest text-[10px] outline-none focus:bg-[var(--navy)] focus:text-white transition-all rounded-none"
+                          />
+                          <button
+                            onClick={() => handleAddSubcategory(category.id)}
+                            disabled={savingSubcategories === category.id || !newSubcategoryName.trim()}
+                            className="bg-[var(--gold)] text-[var(--navy)] px-4 py-2 font-black uppercase tracking-widest text-[10px] hover:bg-[var(--navy)] hover:text-white transition-colors disabled:opacity-50"
+                          >
+                            {savingSubcategories === category.id ? '...' : 'Add'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <button
-                    onClick={() => handleDelete(category.id, category.name)}
-                    className="border-2 border-red-600 text-red-600 px-4 py-2 font-bold uppercase tracking-widest text-[10px] hover:bg-red-600 hover:text-white transition-all rounded-none"
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

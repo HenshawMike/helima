@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import TrackOrderClient from './TrackOrderClient';
 
 export const metadata: Metadata = {
-  title: "Track Your Order | Helima",
+  title: "Track Your Order ",
   description: "Check the real-time status of your premium purchases and imported designer goods order delivery using our tracking tool.",
   robots: {
     index: false,

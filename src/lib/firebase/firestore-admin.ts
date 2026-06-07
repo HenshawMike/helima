@@ -178,15 +178,41 @@ export async function updateOrderStatusServer(id: string, status: string) {
   });
 }
 
-export async function createCategoryServer(name: string) {
+export async function createCategoryServer(name: string, subcategories: string[] = []) {
   if (!adminDb) throw new Error('Database not initialized');
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   const docRef = await adminDb.collection('categories').add({
     name,
     slug,
+    subcategories,
     createdAt: new Date(),
   });
   return docRef.id;
+}
+
+export async function updateCategoryServer(id: string, data: { subcategories?: string[] }) {
+  if (!adminDb) throw new Error('Database not initialized');
+  await adminDb.collection('categories').doc(id).update({
+    ...data,
+    updatedAt: new Date(),
+  });
+}
+
+export async function getCategoryBySlugServer(slug: string): Promise<Category | null> {
+  if (!adminDb) return null;
+  try {
+    const snapshot = await adminDb
+      .collection('categories')
+      .where('slug', '==', slug)
+      .limit(1)
+      .get();
+    if (snapshot.empty) return null;
+    const doc = snapshot.docs[0];
+    return serialize<Category>({ id: doc.id, ...doc.data() });
+  } catch (error) {
+    console.error('Error fetching category by slug (admin):', error);
+    return null;
+  }
 }
 
 export async function deleteCategoryServer(id: string) {

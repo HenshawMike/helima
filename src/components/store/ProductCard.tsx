@@ -8,9 +8,10 @@ interface ProductCardProps {
   price: number;
   imageUrl: string;
   category: string;
+  availability?: 'available' | 'preorder';
 }
 
-export default function ProductCard({ id, name, price, imageUrl, category }: ProductCardProps) {
+export default function ProductCard({ id, name, price, imageUrl, category, availability }: ProductCardProps) {
   const { items, addItem, updateQuantity } = useCart();
   const [isAdded, setIsAdded] = useState(false);
 
@@ -40,6 +41,8 @@ export default function ProductCard({ id, name, price, imageUrl, category }: Pro
 
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  const isPreorder = availability === 'preorder';
+
   return (
     <div className="solid-card group flex flex-col h-full relative bg-[var(--white)]">
       <div className="relative aspect-square w-full overflow-hidden border-b border-[var(--navy)] bg-gray-100">
@@ -57,6 +60,13 @@ export default function ProductCard({ id, name, price, imageUrl, category }: Pro
             imageLoaded ? 'opacity-100' : 'opacity-0'
           }`}
         />
+
+        {/* Pre-order Badge */}
+        {isPreorder && (
+          <div className="absolute top-3 left-3 bg-[var(--gold)] text-[var(--navy)] font-black text-[9px] uppercase tracking-widest px-2.5 py-1 z-10 border border-[var(--navy)] shadow-[2px_2px_0_0_var(--navy)]">
+            Pre-Order
+          </div>
+        )}
         
         {/* Minimal Quick add button overlay */}
         <div className="absolute inset-0 bg-navy/10 flex items-end justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -68,7 +78,7 @@ export default function ProductCard({ id, name, price, imageUrl, category }: Pro
                 : 'bg-[var(--navy)] text-[var(--white)] border-[var(--navy)] hover:bg-[var(--white)] hover:text-[var(--navy)]'
             }`}
           >
-            {isAdded ? 'Added' : 'Quick Add'}
+            {isAdded ? 'Added' : (isPreorder ? 'Pre-Order' : 'Quick Add')}
           </button>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export const metadata: Metadata = {
-  title: "Returns & Exchanges Policy | Helima",
+  title: "Returns & Exchanges Policy ",
   description: "Learn about our uncompromising standards, our 14-day return window, and how to process a return for your premium acquisitions at Helima.",
   keywords: [
     "returns policy",

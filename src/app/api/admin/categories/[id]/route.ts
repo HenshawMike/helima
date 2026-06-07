@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth } from '@/lib/firebase/admin';
-import { deleteCategoryServer } from '@/lib/firebase/firestore-admin';
+import { deleteCategoryServer, updateCategoryServer } from '@/lib/firebase/firestore-admin';
 
 async function verifyAdmin(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
@@ -33,5 +33,25 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   } catch (error) {
     console.error('Error deleting category:', error);
     return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await verifyAdmin(req);
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { id } = await params;
+  try {
+    const { subcategories } = await req.json();
+    if (!Array.isArray(subcategories)) {
+      return NextResponse.json({ error: 'subcategories must be an array' }, { status: 400 });
+    }
+    await updateCategoryServer(id, { subcategories });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error updating category:', error);
+    return NextResponse.json({ error: 'Failed to update category' }, { status: 500 });
   }
 }

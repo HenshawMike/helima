@@ -3,7 +3,7 @@ import { getProductsServer, getCategoriesServer } from '@/lib/firebase/firestore
 import ProductsClient from './ProductsClient';
 
 export const metadata: Metadata = {
-  title: "Premium Products Catalog | Helima",
+  title: "Premium Products Catalog ",
   description: "Browse our exclusive catalog of curated garments, designer jackets, luxury streetwear hoodies, minimal jewelry, premium shoes, and high-fashion lifestyle accessories.",
   keywords: [
     "premium catalog",

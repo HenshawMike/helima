@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import CartClient from './CartClient';
 
 export const metadata: Metadata = {
-  title: "Cart | Helima",
+  title: "Cart ",
   description: "Review the premium garments, luxury jackets, designer streetwear, and lifestyle accessories in your cart before proceeding to our secure checkout.",
   robots: {
     index: false,

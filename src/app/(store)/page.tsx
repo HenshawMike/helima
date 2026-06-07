@@ -3,7 +3,7 @@ import { getFeaturedProductsServer } from '@/lib/firebase/firestore-admin';
 import HomeClient from './HomeClient';
 
 export const metadata: Metadata = {
-  title: "Premium Fashion & Lifestyle Boutique | Helima",
+  title: "Premium Fashion & Lifestyle Boutique ",
   description: "Shop the finest curated imports, designer fashion, luxury streetwear apparel, and premium lifestyle accessories. Delivered with uncompromising standards and secure payments.",
   keywords: [
     "Helima boutique",
